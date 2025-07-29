@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">OMRS Appo</string>
+    <string name="login_title">Welcome to OMRS Appo</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">Login</string>
+    <string name="chat_title">Appointment Assistant</string>
+    <string name="chat_hint">Describe your appointment needs...</string>
+    <string name="send_button">Send</string>
+    <string name="start_chat_prompt">Hello! I\'m here to help you schedule an appointment. Please describe what you need an appointment for.</string>
+    <string name="generating_report">Generating appointment summary...</string>
+    <string name="appointment_created">Appointment created successfully!</string>
+    <string name="error_message">Something went wrong. Please try again.</string>
+</resources>
