@@ -1,7 +1,7 @@
 """Logging configuration for the service."""
 import sys
 from loguru import logger
-from .config import get_settings
+from src.core.config import get_settings
 
 
 def setup_logging():

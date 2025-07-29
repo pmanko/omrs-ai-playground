@@ -3,8 +3,8 @@ import google.generativeai as genai
 from typing import List, Dict, Any, Optional
 from loguru import logger
 from tenacity import retry, stop_after_attempt, wait_exponential
-from .config import get_settings
-from .models import ConversationSession, TriageData
+from src.core.config import get_settings
+from src.models.domain import ConversationSession, TriageData
 
 
 class MedGemmaClient:

@@ -4,8 +4,8 @@ import redis.asyncio as redis
 from typing import Optional
 from datetime import timedelta
 from loguru import logger
-from .models import ConversationSession, ConversationState
-from .config import get_settings
+from src.models.domain import ConversationSession, ConversationState
+from src.core.config import get_settings
 
 
 class SessionManager:

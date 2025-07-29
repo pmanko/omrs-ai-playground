@@ -4,23 +4,22 @@ from fastapi.responses import PlainTextResponse
 from loguru import logger
 import uuid
 from typing import Optional
-from .config import get_settings
-from .models import (
-    WhatsAppWebhookData, 
-    WhatsAppMessage, 
+from src.core.config import get_settings
+from src.models.whatsapp import WhatsAppWebhookData, WhatsAppMessage
+from src.models.domain import (
     ConversationSession,
     PatientProfile,
     ConversationState
 )
-from .session_manager import session_manager
-from .conversation_manager import conversation_manager
+from src.services.session_manager import session_manager
+from src.services.conversation_manager import conversation_manager
 
 
-router = APIRouter(prefix="/webhook", tags=["webhook"])
+router = APIRouter(tags=["webhook"])
 settings = get_settings()
 
 
-@router.get("/whatsapp")
+@router.get("/")
 async def verify_webhook(
     hub_mode: str = Query(alias="hub.mode"),
     hub_verify_token: str = Query(alias="hub.verify_token"),
@@ -35,7 +34,7 @@ async def verify_webhook(
     raise HTTPException(status_code=403, detail="Verification failed")
 
 
-@router.post("/whatsapp")
+@router.post("/")
 async def handle_whatsapp_webhook(request: Request) -> Response:
     """Handle incoming WhatsApp messages and status updates."""
     try:

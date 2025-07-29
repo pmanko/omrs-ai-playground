@@ -1,6 +1,12 @@
 # WhatsApp-OpenMRS-MedGemma Service
 FROM python:3.11-slim
 
+# Add a label to the image
+LABEL maintainer="Your Name <your.email@example.com>"
+LABEL version="1.0"
+LABEL description="Service for integrating WhatsApp, OpenMRS, and MedGemma."
+
+
 # Set working directory
 WORKDIR /app
 

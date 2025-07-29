@@ -18,8 +18,9 @@ from fhir.resources.codeableconcept import CodeableConcept
 from fhir.resources.coding import Coding
 from fhir.resources.period import Period
 from fhir.resources.narrative import Narrative
-from .config import get_settings
-from .models import PatientProfile, AppointmentPreferences, TriageData, TriageReport
+from src.core.config import get_settings
+from src.models.domain import PatientProfile, AppointmentPreferences, TriageData
+from src.models.openmrs import TriageReport
 
 
 class OpenMRSClient:

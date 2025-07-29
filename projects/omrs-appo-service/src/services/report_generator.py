@@ -2,7 +2,8 @@
 from datetime import datetime
 from typing import List, Dict, Any
 from loguru import logger
-from .models import ConversationSession, TriageReport
+from src.models.domain import ConversationSession
+from src.models.openmrs import TriageReport
 
 
 class ReportGenerator:

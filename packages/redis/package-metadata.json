@@ -1,0 +1,11 @@
+{
+  "id": "redis",
+  "name": "Redis",
+  "description": "Redis cache",
+  "type": "infrastructure",
+  "version": "1.0.0",
+  "dependencies": [],
+  "environmentVariables": {
+    "REDIS_IMAGE": "redis:7.2.5-alpine"
+  }
+} 

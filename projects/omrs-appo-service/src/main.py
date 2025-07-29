@@ -5,10 +5,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
-from .config import get_settings
-from .logging_config import setup_logging
-from .session_manager import session_manager
-from .webhooks import router as webhook_router
+from src.core.config import get_settings
+from src.core.logging_config import setup_logging
+from src.services.session_manager import session_manager
+from src.api.v1.webhooks import router as webhook_router
 
 
 # Setup logging
@@ -59,7 +59,7 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(webhook_router, prefix="/api")
+app.include_router(webhook_router, prefix="/api/v1")
 
 
 @app.get("/")

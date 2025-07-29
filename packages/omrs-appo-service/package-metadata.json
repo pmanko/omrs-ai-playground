@@ -1,0 +1,29 @@
+{
+  "id": "omrs-appo-service",
+  "name": "OMRS Appointment Service",
+  "description": "Service for integrating WhatsApp, OpenMRS, and MedGemma.",
+  "type": "service",
+  "version": "1.0.0",
+  "dependencies": [
+    "emr-openmrs",
+    "redis"
+  ],
+  "environmentVariables": {
+    "OMRS_APPO_SERVICE_IMAGE": "omrs-appo-service:latest",
+    "WHATSAPP_API_KEY": "",
+    "WHATSAPP_PHONE_NUMBER_ID": "",
+    "WHATSAPP_WEBHOOK_VERIFY_TOKEN": "",
+    "WHATSAPP_ACCESS_TOKEN": "",
+    "GOOGLE_API_KEY": "",
+    "MEDGEMMA_MODEL": "gemini-1.5-flash",
+    "OPENMRS_BASE_URL": "http://openmrs:8080/openmrs/ws/fhir2/R4",
+    "REDIS_URL": "redis://redis:6379",
+    "OPENMRS_USERNAME": "admin",
+    "OPENMRS_PASSWORD": "Admin123",
+    "SERVICE_PORT": "8000",
+    "SERVICE_HOST": "0.0.0.0",
+    "LOG_LEVEL": "INFO",
+    "ENVIRONMENT": "production",
+    "WEBHOOK_BASE_URL": ""
+  }
+} 

@@ -1,0 +1,22 @@
+services:
+  redis:
+    image: ${REDIS_IMAGE:-redis:7.2.5-alpine}
+    hostname: redis
+    container_name: redis
+    networks:
+      - default
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+
+networks:
+  default:
+    name: instant
+    external: true 

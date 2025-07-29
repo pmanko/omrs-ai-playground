@@ -3,17 +3,17 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime, timedelta
 from loguru import logger
 import re
-from .models import (
-    ConversationSession, 
+from src.models.domain import (
+    ConversationSession,
     ConversationState,
     TriageData,
     AppointmentPreferences
 )
-from .session_manager import session_manager
-from .whatsapp_client import whatsapp_client
-from .medgemma_client import medgemma_client
-from .openmrs_client import openmrs_client
-from .report_generator import report_generator
+from src.services.session_manager import session_manager
+from src.clients.whatsapp_client import whatsapp_client
+from src.clients.medgemma_client import medgemma_client
+from src.clients.openmrs_client import openmrs_client
+from src.services.report_generator import report_generator
 
 
 class ConversationManager:

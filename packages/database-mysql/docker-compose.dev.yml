@@ -1,0 +1,7 @@
+
+services:
+  mysql:
+    ports:  
+      - target: 3306
+        published: 3336
+        mode: host

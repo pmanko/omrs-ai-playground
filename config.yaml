@@ -1,0 +1,10 @@
+projectName: omrs-appo
+image: omrs-app:latest
+logPath: /tmp/logs
+
+packages:
+  - database-mysql
+  - emr-openmrs
+  - omrs-medgemma-service
+
+
