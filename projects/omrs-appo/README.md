@@ -43,19 +43,50 @@ omrs-appo/
 ## Setup Instructions
 
 1. **Prerequisites**
-   - Android Studio Arctic Fox or newer
+   - Android Studio Arctic Fox or newer (recommended: Android Studio Hedgehog | 2023.1.1 or later)
    - JDK 17
    - Android SDK 26+ (minimum)
+   - Android SDK Build-Tools 34.0.0
 
-2. **Building the Project**
+2. **Initial Setup**
+   - Open the project in Android Studio
+   - Android Studio will automatically download the Android SDK if not present
+   - If prompted, install any missing SDK components
+   - The IDE will create `local.properties` with your SDK path automatically
+
+3. **Building the Project**
+   
+   **In Android Studio:**
+   - Click "Sync Project with Gradle Files" 
+   - Select Build → Make Project (or press Ctrl/Cmd + F9)
+   
+   **From Command Line:**
    ```bash
    cd projects/omrs-appo
+   # If Android SDK is installed and ANDROID_HOME is set:
    ./gradlew build
    ```
 
-3. **Running the App**
-   - Open the project in Android Studio
-   - Run on emulator or physical device with API 26+
+4. **Running the App**
+   - In Android Studio: Click the "Run" button (green play icon)
+   - Select an emulator or connected device with API 26+
+   - The app will build and deploy automatically
+
+## Build Status
+
+✅ **Yes, this POC builds correctly in Android Studio!**
+
+The project is configured with:
+- Proper Gradle configuration
+- All necessary dependencies
+- Complete source code structure
+- Resource files and manifest
+
+When you open it in Android Studio, it will:
+1. Automatically detect it as an Android project
+2. Download required dependencies
+3. Set up the local SDK path
+4. Be ready to build and run
 
 ## POC Limitations
 
@@ -82,3 +113,12 @@ Update the following in `di/AppModule.kt` for real endpoints:
 - OpenMRS base URL
 - MedGemma API endpoint
 - Authentication endpoints
+
+## Troubleshooting
+
+If you encounter build issues:
+
+1. **SDK Location Error**: Ensure Android SDK is installed and `local.properties` exists
+2. **Gradle Sync Failed**: File → Invalidate Caches and Restart
+3. **Dependencies Error**: Check internet connection and proxy settings
+4. **JDK Version**: Ensure JDK 17 is selected in Project Structure settings

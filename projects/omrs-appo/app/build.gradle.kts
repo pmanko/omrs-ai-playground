@@ -44,7 +44,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -63,11 +63,12 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material.icons.extended:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.6")
     
-    // FHIR Android SDK
-    implementation("com.google.android.fhir:engine:0.1.0-beta05")
-    implementation("com.google.android.fhir:data-capture:1.0.0")
+    // FHIR Android SDK - using a stable version
+    implementation("ca.uhn.hapi.fhir:hapi-fhir-structures-r4:6.8.0")
+    implementation("ca.uhn.hapi.fhir:hapi-fhir-client:6.8.0")
     
     // Networking
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
