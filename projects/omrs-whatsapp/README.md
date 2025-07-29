@@ -1,6 +1,6 @@
 # WhatsApp-OpenMRS-MedGemma Integration Service
 
-A proof-of-concept service that enables AI-powered appointment scheduling and medical triage through WhatsApp, integrating with OpenMRS FHIR endpoints and Google's MedGemma model.
+AI-powered appointment scheduling and medical triage through WhatsApp, designed to work with Instant OpenHIE v2.
 
 ## Overview
 
@@ -11,58 +11,20 @@ This service provides:
 - **Triage report generation** for healthcare providers
 - **Conversation state management** using Redis
 
-## Architecture
-
-```
-┌─────────────┐     ┌──────────────┐     ┌──────────────┐
-│   WhatsApp  │────▶│   Service    │────▶│   OpenMRS    │
-│    Users    │     │   (FastAPI)  │     │  FHIR API   │
-└─────────────┘     └──────┬───────┘     └──────────────┘
-                           │
-                    ┌──────┴───────┐
-                    │              │
-              ┌─────▼─────┐ ┌─────▼─────┐
-              │  MedGemma │ │   Redis   │
-              │    AI     │ │  Session  │
-              └───────────┘ └───────────┘
-```
-
-## Features
-
-### 1. Conversational Triage
-- Natural language symptom collection
-- AI-powered follow-up questions
-- Severity assessment (1-5 scale)
-- Emergency detection and recommendations
-
-### 2. Appointment Scheduling
-- Date and time preference collection
-- Integration with OpenMRS scheduling
-- Automated confirmation messages
-
-### 3. Medical Record Integration
-- Patient creation/lookup in OpenMRS
-- Triage encounter documentation
-- FHIR-compliant data storage
-
 ## Prerequisites
 
-- Docker and Docker Compose
+- Instant OpenHIE v2 environment with:
+  - OpenMRS with FHIR module (service name: `openmrs`)
+  - Redis (service name: `redis`)
 - WhatsApp Business API access
 - Google Cloud API key (for MedGemma)
-- OpenMRS instance with FHIR module
-- Ngrok (for local development)
+- Public URL for WhatsApp webhooks (e.g., via ngrok or reverse proxy)
 
-## Setup Instructions
+## Quick Start
 
-### 1. Clone the Repository
-```bash
-cd projects/omrs-whatsapp
-```
+### 1. Configure Environment
 
-### 2. Configure Environment Variables
-Create a `.env` file based on `.env.example`:
-
+Create `.env` file from template:
 ```bash
 cp .env.example .env
 ```
@@ -70,7 +32,7 @@ cp .env.example .env
 Edit `.env` with your credentials:
 ```env
 # WhatsApp Configuration
-WHATSAPP_API_KEY=your_api_key
+WHATSAPP_API_KEY=your_actual_api_key
 WHATSAPP_PHONE_NUMBER_ID=your_phone_id
 WHATSAPP_WEBHOOK_VERIFY_TOKEN=your_verify_token
 WHATSAPP_ACCESS_TOKEN=your_access_token
@@ -78,159 +40,121 @@ WHATSAPP_ACCESS_TOKEN=your_access_token
 # Google MedGemma
 GOOGLE_API_KEY=your_google_api_key
 
-# Webhook URL (use ngrok for local development)
-WEBHOOK_BASE_URL=https://your-domain.com
+# Webhook URL (your public URL)
+WEBHOOK_BASE_URL=https://your-public-url.com
 ```
 
-### 3. Start the Services
-```bash
-# Start all services
-docker-compose up -d
+### 2. Build Docker Image
 
-# For development with ngrok
-docker-compose --profile development up -d
+```bash
+docker build -t omrs-whatsapp:latest .
+```
+
+### 3. Deploy to Instant OpenHIE
+
+Create a package configuration for Instant OpenHIE:
+
+```yaml
+# instant-openhie-config.yaml
+packages:
+  - name: omrs-whatsapp
+    services:
+      omrs-whatsapp:
+        image: omrs-whatsapp:latest
+        environment:
+          - WHATSAPP_API_KEY=${WHATSAPP_API_KEY}
+          - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
+          - WHATSAPP_WEBHOOK_VERIFY_TOKEN=${WHATSAPP_WEBHOOK_VERIFY_TOKEN}
+          - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+          - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+          - WEBHOOK_BASE_URL=${WEBHOOK_BASE_URL}
+        networks:
+          - instant
+        ports:
+          - "8000:8000"
+```
+
+Deploy with Instant OpenHIE:
+```bash
+instant package init -p omrs-whatsapp
+instant package up -p omrs-whatsapp
 ```
 
 ### 4. Configure WhatsApp Webhook
-1. Get your ngrok URL (if using ngrok):
-   ```bash
-   docker logs omrs-ngrok
-   ```
 
+1. Get your service URL (e.g., through ngrok or your public domain)
 2. Configure webhook in WhatsApp Business API:
-   - Webhook URL: `https://your-ngrok-url.ngrok.io/api/webhook/whatsapp`
-   - Verify Token: Your `WHATSAPP_WEBHOOK_VERIFY_TOKEN`
+   - **Webhook URL**: `https://your-public-url.com/api/webhook/whatsapp`
+   - **Verify Token**: Your `WHATSAPP_WEBHOOK_VERIFY_TOKEN` from `.env`
+   - **Subscribe to**: messages, message_status
 
-## Usage
+## Service Endpoints
 
-### Patient Workflow
+- **Health Check**: `GET /health`
+- **WhatsApp Webhook**: `GET/POST /api/webhook/whatsapp`
+- **Service Stats**: `GET /api/stats`
 
-1. **Initiate Conversation**: Patient sends any message to your WhatsApp number
-2. **Provide Information**: Patient responds to AI prompts about:
-   - Name
-   - Symptoms
-   - Duration and severity
-   - Medical history (if relevant)
-3. **Schedule Appointment**: Patient selects from available time slots
-4. **Receive Confirmation**: Patient gets appointment details
+## Conversation Flow
 
-### Sample Conversation
+1. Patient sends any message to your WhatsApp Business number
+2. AI collects patient name and symptoms
+3. Triage assessment determines urgency (1-5 scale)
+4. Patient selects appointment time
+5. Confirmation sent with appointment details
+6. Records created in OpenMRS
 
-```
-Patient: Hi
-Bot: Hello! I'm MedGemma, an AI assistant here to help you schedule a medical appointment...
+## Required Network Services
 
-Patient: John Smith
-Bot: Thank you, John Smith. What brings you in today?
+The service expects these services on the Docker network:
+- `openmrs`: OpenMRS with FHIR API at port 8080
+- `redis`: Redis at port 6379
 
-Patient: I've had a persistent headache for 3 days
-Bot: I understand you've been experiencing headaches. Can you describe the pain?
+## Environment Variables
 
-[Conversation continues with triage questions]
-
-Bot: Based on your symptoms, I recommend scheduling an appointment. Here are available times...
-```
-
-## API Endpoints
-
-### Health Check
-```
-GET /health
-```
-
-### Service Statistics
-```
-GET /api/stats
-```
-
-### WhatsApp Webhook
-```
-GET /api/webhook/whatsapp  # Verification
-POST /api/webhook/whatsapp # Message handling
-```
-
-## Development
-
-### Running Locally
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run with hot reload
-python -m src.main
-```
-
-### Testing
-```bash
-# Run tests (to be implemented)
-pytest tests/
-```
-
-## Configuration
-
-### Conversation States
-- `INITIAL`: Welcome message
-- `COLLECTING_SYMPTOMS`: Gathering patient information
-- `TRIAGE_ASSESSMENT`: AI analyzing symptoms
-- `SCHEDULING_APPOINTMENT`: Selecting appointment times
-- `CONFIRMING_DETAILS`: Final confirmation
-- `COMPLETED`: Appointment scheduled
-- `CANCELLED`: User cancelled
-
-### Triage Categories
-1. Non-urgent (Green)
-2. Less urgent (Yellow)
-3. Urgent (Orange)
-4. Very urgent (Red)
-5. Immediate/Resuscitation (Red)
-
-## Security Considerations
-
-- All patient data is encrypted in transit
-- Redis sessions expire after 24 hours
-- OpenMRS credentials should use secure passwords
-- WhatsApp webhook verification prevents unauthorized access
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `WHATSAPP_API_KEY` | WhatsApp Business API Key | Required |
+| `WHATSAPP_PHONE_NUMBER_ID` | WhatsApp Phone Number ID | Required |
+| `WHATSAPP_WEBHOOK_VERIFY_TOKEN` | Webhook verification token | Required |
+| `WHATSAPP_ACCESS_TOKEN` | WhatsApp access token | Required |
+| `GOOGLE_API_KEY` | Google API key for MedGemma | Required |
+| `OPENMRS_BASE_URL` | OpenMRS FHIR endpoint | `http://openmrs:8080/openmrs/ws/fhir2/R4` |
+| `REDIS_URL` | Redis connection URL | `redis://redis:6379` |
 
 ## Troubleshooting
 
-### Common Issues
-
-1. **WhatsApp webhook not receiving messages**
-   - Check ngrok is running and URL is correct
-   - Verify webhook token matches configuration
-
-2. **OpenMRS connection errors**
-   - Ensure OpenMRS is running and FHIR module is installed
-   - Check network connectivity between containers
-
-3. **MedGemma API errors**
-   - Verify Google API key is valid
-   - Check API quotas and limits
-
-### Logs
+### View Logs
 ```bash
-# View service logs
-docker logs omrs-whatsapp -f
-
-# View all logs
-docker-compose logs -f
+docker logs omrs-whatsapp
 ```
 
-## Contributing
+### Test Health
+```bash
+curl http://localhost:8000/health
+```
 
-This is a proof-of-concept. For production use, consider:
-- Adding comprehensive error handling
-- Implementing retry logic for external services
-- Adding monitoring and alerting
-- Enhancing security measures
-- Implementing proper testing
+### Test Webhook Locally
+```bash
+curl -X POST http://localhost:8000/api/webhook/whatsapp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "object": "whatsapp_business_account",
+    "entry": [{
+      "changes": [{
+        "value": {
+          "messages": [{
+            "id": "test_msg",
+            "from": "1234567890",
+            "timestamp": "1234567890",
+            "type": "text",
+            "text": {"body": "Hello"}
+          }]
+        }
+      }]
+    }]
+  }'
+```
 
 ## License
 
 [Specify your license]
-
-## Acknowledgments
-
-- OpenMRS community
-- Google Health AI team
-- WhatsApp Business Platform
