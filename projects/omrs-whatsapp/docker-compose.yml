@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  # WhatsApp-OpenMRS-MedGemma Service
+  omrs-whatsapp:
+    build: .
+    container_name: omrs-whatsapp
+    ports:
+      - "8000:8000"
+    environment:
+      # WhatsApp Configuration
+      - WHATSAPP_API_KEY=${WHATSAPP_API_KEY}
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID}
+      - WHATSAPP_WEBHOOK_VERIFY_TOKEN=${WHATSAPP_WEBHOOK_VERIFY_TOKEN}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN}
+      # OpenMRS Configuration
+      - OPENMRS_BASE_URL=http://openmrs:8080/openmrs/ws/fhir2/R4
+      - OPENMRS_USERNAME=admin
+      - OPENMRS_PASSWORD=Admin123
+      # Google MedGemma Configuration
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - MEDGEMMA_MODEL=gemini-1.5-flash
+      # Redis Configuration
+      - REDIS_URL=redis://redis:6379
+      - REDIS_DB=0
+      # Service Configuration
+      - SERVICE_PORT=8000
+      - SERVICE_HOST=0.0.0.0
+      - LOG_LEVEL=INFO
+      - ENVIRONMENT=development
+      - WEBHOOK_BASE_URL=${WEBHOOK_BASE_URL}
+    depends_on:
+      - redis
+      - openmrs
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - omrs-network
+
+  # Redis for session management
+  redis:
+    image: redis:7-alpine
+    container_name: omrs-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - omrs-network
+
+  # OpenMRS (example setup - adjust as needed)
+  openmrs:
+    image: openmrs/openmrs-reference-application:latest
+    container_name: openmrs
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_DATABASE=openmrs
+      - DB_HOST=mysql
+      - DB_USERNAME=openmrs
+      - DB_PASSWORD=openmrs
+      - DB_CREATE_TABLES=true
+      - DB_AUTO_UPDATE=true
+      - MODULE_WEB_ADMIN=true
+    depends_on:
+      - mysql
+    volumes:
+      - openmrs-data:/openmrs/data
+    restart: unless-stopped
+    networks:
+      - omrs-network
+
+  # MySQL for OpenMRS
+  mysql:
+    image: mysql:5.7
+    container_name: openmrs-mysql
+    environment:
+      - MYSQL_DATABASE=openmrs
+      - MYSQL_USER=openmrs
+      - MYSQL_PASSWORD=openmrs
+      - MYSQL_ROOT_PASSWORD=openmrs_root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - omrs-network
+
+  # Ngrok for local development (optional)
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: omrs-ngrok
+    command: http omrs-whatsapp:8000 --log=stdout
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    depends_on:
+      - omrs-whatsapp
+    networks:
+      - omrs-network
+    profiles:
+      - development
+
+networks:
+  omrs-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  openmrs-data:
+  mysql-data:
