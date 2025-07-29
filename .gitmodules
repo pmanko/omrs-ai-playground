@@ -1,0 +1,6 @@
+[submodule "appoint-ready"]
+	path = appoint-ready
+	url = https://huggingface.co/spaces/google/appoint-ready
+[submodule "projects/appoint-ready"]
+	path = projects/appoint-ready
+	url = https://huggingface.co/spaces/google/appoint-ready
