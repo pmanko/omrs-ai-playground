@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     
     # OpenMRS Configuration
     openmrs_base_url: str = Field(
-        default="http://openmrs:8080/openmrs/ws/rest/v1",
+        default="https://www.omrs-appo.live/openmrs/ws/rest/v1",
         description="OpenMRS REST API base URL"
     )
     openmrs_username: str = Field(default="admin", description="OpenMRS username")
