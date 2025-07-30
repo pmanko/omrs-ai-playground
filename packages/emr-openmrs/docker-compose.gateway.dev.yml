@@ -1,0 +1,5 @@
+services:
+  
+  openmrs-gateway:
+    ports:
+      - "8080:80"

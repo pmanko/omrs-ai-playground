@@ -57,7 +57,7 @@ function initialize_package() {
 
   (
     # Deploy the MySQL service using the base compose file and optionally the dev file
-    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.yml" "mysql" "$mysql_dev_compose_filename"
+    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.yml" "" "$mysql_dev_compose_filename"
   ) ||
     {
       log error "Failed to deploy package"

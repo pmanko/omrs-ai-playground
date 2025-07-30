@@ -4,7 +4,7 @@
   "description": "An OpenMRS-based EMR for Haiti",
   "type": "infrastructure",
   "version": "0.0.0",
-  "dependencies": [""],
+  "dependencies": [],
   "environmentVariables": {
     "OMRS_DB_USER": "openmrs",
     "OMRS_DB_PASSWORD": "openmrs",
