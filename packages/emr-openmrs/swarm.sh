@@ -33,21 +33,24 @@ function import_sources() {
 
 function initialize_package() {
 
-
-  # if [ "${MODE}" == "dev" ]; then
-  #   log info "Running package in DEV mode"
-  #   postgres_dev_compose_filename="docker-compose-postgres.dev.yml"
-  #   hapi_fhir_dev_compose_filename="docker-compose.dev.yml"
-  # else
-  log info "Running package in PROD mode"
-  #fi
-
-  # if [ "${CLUSTERED_MODE}" == "true" ]; then
-  #   postgres_cluster_compose_filename="docker-compose-postgres.cluster.yml"
-  # fi
+  if [[ "${MODE}" == "dev" ]]; then
+    log info "Running package in DEV mode"
+    openmrs_dev_compose_filename="docker-compose.dev.yml"
+    openmrs_gateway_dev_compose_filename="docker-compose.gateway.dev.yml"
+  else
+    log info "Running package in PROD mode"
+    openmrs_compose_filename="docker-compose.yml"
+    openmrs_gateway_compose_filename="docker-compose.gateway.yml"
+  fi
 
   (
-    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.yml" "backend"
+    docker::await_service_status "mysql" "mysql" "Running"
+    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.yml" "${openmrs_dev_compose_filename}"
+    docker::await_service_status "$STACK" "openmrs" "Running"
+    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.frontend.yml"
+    docker::await_service_status "$STACK" "openmrs-frontend" "Running"
+    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.gateway.yml" "${openmrs_gateway_dev_compose_filename}"
+    docker::await_service_status "$STACK" "openmrs-gateway" "Running"
   ) ||
     {
       log error "Failed to deploy package"
@@ -68,8 +71,6 @@ function destroy_package() {
 main() {
   init_vars "$@"
   import_sources
-  # chmod +x "${COMPOSE_FILE_PATH}/docker-compose.sh"
-  # source "${COMPOSE_FILE_PATH}/docker-compose.sh"
 
   if [[ "${ACTION}" == "init" ]] || [[ "${ACTION}" == "up" ]]; then
     if [[ "${CLUSTERED_MODE}" == "true" ]]; then

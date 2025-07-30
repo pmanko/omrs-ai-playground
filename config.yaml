@@ -7,5 +7,6 @@ packages:
   - emr-openmrs
   - redis
   - omrs-appo-service
+  - reverse-proxy-nginx
 
 

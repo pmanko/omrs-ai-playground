@@ -1,0 +1,5 @@
+services:
+  openmrs:
+    ports:
+      - "8888:8080"
+

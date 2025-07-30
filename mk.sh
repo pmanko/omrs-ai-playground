@@ -6,17 +6,17 @@
 #./instant project destroy --env-file .env
 #./instant project init --env-file .env
 
-sudo ./instant package destroy -n database-mysql
-sudo ./instant package init -n database-mysql -d
+./instant package destroy -n database-mysql
+./instant package init -n database-mysql -d
 
-sudo ./instant package destroy -n emr-openmrs
-sudo ./instant package init -n emr-openmrs -d
+./instant package destroy -n emr-openmrs
+./instant package init -n emr-openmrs -d
 
-sudo ./instant package destroy -n redis
-sudo ./instant package init -n redis -d
+# ./instant package destroy -n redis
+# ./instant package init -n redis -d
 
-sudo ./instant package destroy -n omrs-appo-service
-sudo ./instant package init -n omrs-appo-service -d
+# ./instant package destroy -n omrs-appo-service
+# ./instant package init -n omrs-appo-service -d
 
 
 
