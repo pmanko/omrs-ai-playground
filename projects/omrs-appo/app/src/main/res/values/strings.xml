@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">OMRS Appo</string>
     <string name="login_title">Welcome to OMRS Appo</string>
-    <string name="username_hint">Username</string>
-    <string name="password_hint">Password</string>
+    <string name="openmrs_id_hint">OpenMRS Patient ID</string>
+    <string name="openmrs_id_example">e.g., PAT-001234</string>
     <string name="login_button">Login</string>
     <string name="chat_title">Appointment Assistant</string>
     <string name="chat_hint">Describe your appointment needs...</string>

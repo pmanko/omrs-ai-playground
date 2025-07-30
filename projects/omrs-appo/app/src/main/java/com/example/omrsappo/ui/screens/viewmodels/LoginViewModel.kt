@@ -13,7 +13,8 @@ import javax.inject.Inject
 data class LoginState(
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val welcomeMessage: String? = null
 )
 
 @HiltViewModel
@@ -24,16 +25,18 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow(LoginState())
     val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
 
-    fun login(username: String, password: String) {
+    fun authenticateWithOpenMRS(openmrsId: String) {
         viewModelScope.launch {
             _loginState.value = LoginState(isLoading = true)
             try {
-                // For POC, we'll use simple validation
-                val success = authRepository.login(username, password)
-                if (success) {
-                    _loginState.value = LoginState(isSuccess = true)
+                val authResult = authRepository.authenticateWithOpenMRS(openmrsId)
+                if (authResult.isSuccess) {
+                    _loginState.value = LoginState(
+                        isSuccess = true,
+                        welcomeMessage = authResult.welcomeMessage
+                    )
                 } else {
-                    _loginState.value = LoginState(error = "Invalid credentials")
+                    _loginState.value = LoginState(error = authResult.errorMessage ?: "Authentication failed")
                 }
             } catch (e: Exception) {
                 _loginState.value = LoginState(error = e.message ?: "Login failed")

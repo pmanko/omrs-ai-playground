@@ -18,7 +18,7 @@ services:
 
 networks:
   default:
-    name: instant
+    name: mysql_default
     external: true
 
 volumes:

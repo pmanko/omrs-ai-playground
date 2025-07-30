@@ -21,10 +21,16 @@ import com.example.omrsappo.ui.screens.viewmodels.ChatViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
+    welcomeMessage: String = "Hello! I'm here to help you schedule an appointment. Please describe what you need an appointment for.",
     viewModel: ChatViewModel = hiltViewModel()
 ) {
     val chatState by viewModel.chatState.collectAsState()
     var messageText by remember { mutableStateOf("") }
+
+    // Initialize with welcome message
+    LaunchedEffect(welcomeMessage) {
+        viewModel.initializeWithWelcomeMessage(welcomeMessage)
+    }
 
     Scaffold(
         topBar = {

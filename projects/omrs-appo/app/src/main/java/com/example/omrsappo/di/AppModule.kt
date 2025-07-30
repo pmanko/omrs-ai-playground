@@ -54,6 +54,17 @@ object AppModule {
     
     @Provides
     @Singleton
+    @Named("OmrsAppoService")
+    fun provideOmrsAppoServiceRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:8000/") // Android emulator localhost for development
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+    
+    @Provides
+    @Singleton
     fun provideOpenMRSApi(@Named("OpenMRS") retrofit: Retrofit): OpenMRSApi {
         return retrofit.create(OpenMRSApi::class.java)
     }
@@ -66,8 +77,14 @@ object AppModule {
     
     @Provides
     @Singleton
-    fun provideAuthRepository(): AuthRepository {
-        return AuthRepositoryImpl()
+    fun provideOpenMRSAuthApi(@Named("OmrsAppoService") retrofit: Retrofit): OpenMRSAuthApi {
+        return retrofit.create(OpenMRSAuthApi::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideAuthRepository(openMRSAuthApi: OpenMRSAuthApi): AuthRepository {
+        return AuthRepositoryImpl(openMRSAuthApi)
     }
     
     @Provides

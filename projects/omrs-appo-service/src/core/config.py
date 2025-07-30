@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     
     # OpenMRS Configuration
     openmrs_base_url: str = Field(
-        default="http://localhost:8080/openmrs/ws/fhir2/R4",
-        description="OpenMRS FHIR API base URL"
+        default="http://openmrs:8080/openmrs/ws/rest/v1",
+        description="OpenMRS REST API base URL"
     )
     openmrs_username: str = Field(default="admin", description="OpenMRS username")
     openmrs_password: str = Field(default="Admin123", description="OpenMRS password")

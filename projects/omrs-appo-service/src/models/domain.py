@@ -72,3 +72,29 @@ class ConversationSession(BaseModel):
         }
         self.conversation_history.append(message)
         self.updated_at = datetime.utcnow()
+
+
+class TriageReport(BaseModel):
+    """Triage report for medical record."""
+    patient_id: str
+    encounter_datetime: datetime
+    chief_complaint: str
+    history_of_present_illness: str
+    symptoms: List[str]
+    recommended_actions: List[str]
+    ai_assessment_summary: str
+    triage_category: str
+    severity_level: int
+
+
+class AuthenticationRequest(BaseModel):
+    """Authentication request model."""
+    openmrsId: str
+
+
+class AuthenticationResult(BaseModel):
+    """Authentication result model."""
+    isSuccess: bool
+    patientName: Optional[str] = None
+    welcomeMessage: Optional[str] = None
+    errorMessage: Optional[str] = None

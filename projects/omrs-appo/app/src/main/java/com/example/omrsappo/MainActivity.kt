@@ -43,15 +43,17 @@ fun AppNavigation() {
     ) {
         composable("login") {
             LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate("chat") {
+                onLoginSuccess = { welcomeMessage ->
+                    navController.navigate("chat/$welcomeMessage") {
                         popUpTo("login") { inclusive = true }
                     }
                 }
             )
         }
-        composable("chat") {
-            ChatScreen()
+        composable("chat/{welcomeMessage}") { backStackEntry ->
+            val welcomeMessage = backStackEntry.arguments?.getString("welcomeMessage") ?: 
+                "Hello! Please describe your main concern."
+            ChatScreen(welcomeMessage = welcomeMessage)
         }
     }
 }

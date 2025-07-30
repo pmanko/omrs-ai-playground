@@ -13,6 +13,7 @@ services:
       - openmrs-data:/openmrs/data
     networks:
       - openmrs_default
+      - mysql_default
 
 volumes:
   openmrs-data:

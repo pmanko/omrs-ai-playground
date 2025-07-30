@@ -6,6 +6,7 @@
   "version": "0.0.0",
   "dependencies": [],
   "environmentVariables": {
+    "TAG": "3.4.0",
     "OMRS_DB_USER": "openmrs",
     "OMRS_DB_PASSWORD": "openmrs",
     "OMRS_CONFIG_CONNECTION_SERVER": "mysql",
