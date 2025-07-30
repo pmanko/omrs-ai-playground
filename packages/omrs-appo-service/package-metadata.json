@@ -2,12 +2,9 @@
   "id": "omrs-appo-service",
   "name": "OMRS Appointment Service",
   "description": "Service for integrating WhatsApp, OpenMRS, and MedGemma.",
-  "type": "service",
-  "version": "1.0.0",
-  "dependencies": [
-    "emr-openmrs",
-    "redis"
-  ],
+  "type": "infrastructure",
+  "version": "0.0.0",
+  "dependencies": [],
   "environmentVariables": {
     "OMRS_APPO_SERVICE_IMAGE": "omrs-appo-service:latest",
     "WHATSAPP_API_KEY": "",

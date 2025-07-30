@@ -2,9 +2,9 @@
   "id": "emr-openmrs",
   "name": "OpenMRS EMR",
   "description": "An OpenMRS-based EMR for Haiti",
-  "type": "emr",
-  "version": "3.x",
-  "dependencies": ["database-mysql"],
+  "type": "infrastructure",
+  "version": "0.0.0",
+  "dependencies": [""],
   "environmentVariables": {
     "OMRS_DB_USER": "openmrs",
     "OMRS_DB_PASSWORD": "openmrs",
