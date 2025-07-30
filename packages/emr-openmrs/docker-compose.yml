@@ -14,6 +14,7 @@ services:
     networks:
       - openmrs_default
       - mysql_default
+      - reverse-proxy_public
 
 volumes:
   openmrs-data:
@@ -24,4 +25,7 @@ networks:
     external: true
   mysql_default:
     name: mysql_default
+    external: true
+  reverse-proxy_public:
+    name: reverse-proxy_public
     external: true

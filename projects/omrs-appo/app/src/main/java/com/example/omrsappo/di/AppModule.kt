@@ -57,7 +57,7 @@ object AppModule {
     @Named("OmrsAppoService")
     fun provideOmrsAppoServiceRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000/") // Android emulator localhost for development
+            .baseUrl("https://service.omrs-appo.live/") // Production endpoint for omrs-appo-service
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
