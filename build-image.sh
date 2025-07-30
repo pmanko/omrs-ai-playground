@@ -30,4 +30,4 @@ if [ -z "$1" ]; then
     fi
 fi
 
-docker build -t omrs-appo:"$TAG_NAME" . --no-cache
+sudo docker build -t omrs-appo:"$TAG_NAME" . --no-cache

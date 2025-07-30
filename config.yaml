@@ -5,6 +5,7 @@ logPath: /tmp/logs
 packages:
   - database-mysql
   - emr-openmrs
+  - redis
   - omrs-appo-service
 
 

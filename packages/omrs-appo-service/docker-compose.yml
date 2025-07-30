@@ -23,9 +23,6 @@ services:
       LOG_LEVEL: ${LOG_LEVEL}
       ENVIRONMENT: ${ENVIRONMENT}
       WEBHOOK_BASE_URL: ${WEBHOOK_BASE_URL}
-    depends_on:
-      - openmrs
-      - redis
     restart: unless-stopped
     deploy:
       replicas: 1
@@ -40,3 +37,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s 
+
+networks:
+  instant:
+    external: true 

@@ -81,7 +81,7 @@ build_custom_image() {
     echo "🏗️  Building custom image: $image_tag"
 
     cd "$project_dir"
-    docker build -t "$image_tag" .
+    sudo docker build -t "$image_tag" .
 
     if [[ $? -eq 0 ]]; then
         echo "✅ Successfully built custom image: $image_tag"
