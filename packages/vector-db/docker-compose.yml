@@ -6,7 +6,7 @@ services:
     networks:
       - instant
     ports:
-      - "${VECTOR_DB_PORT:-8000}:8000"
+      - "${VECTOR_DB_PORT:-8001}:8000"
     environment:
       # ChromaDB Configuration
       CHROMA_SERVER_AUTH_PROVIDER: ${CHROMA_AUTH_PROVIDER:-chromadb.auth.token.TokenAuthServerProvider}

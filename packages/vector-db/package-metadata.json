@@ -4,18 +4,42 @@
   "type": "infrastructure",
   "version": "1.0.0",
   "dependencies": [],
-  "environmentVariables": [
-    "VECTOR_DB_IMAGE",
-    "VECTOR_DB_PORT",
-    "CHROMA_AUTH_TOKEN",
-    "CHROMA_AUTH_PROVIDER",
-    "CHROMA_TELEMETRY",
-    "PERSIST_DIRECTORY",
-    "IS_PERSISTENT",
-    "CHROMA_THREAD_POOL"
-  ],
+  "environmentVariables": {
+    "VECTOR_DB_IMAGE": {
+      "default": "chromadb/chroma:latest",
+      "description": "Docker image for ChromaDB"
+    },
+    "VECTOR_DB_PORT": {
+      "default": "8001",
+      "description": "External port for ChromaDB service"
+    },
+    "CHROMA_AUTH_TOKEN": {
+      "default": "test-token",
+      "description": "Authentication token for ChromaDB"
+    },
+    "CHROMA_AUTH_PROVIDER": {
+      "default": "chromadb.auth.token.TokenAuthServerProvider",
+      "description": "Authentication provider class for ChromaDB"
+    },
+    "CHROMA_TELEMETRY": {
+      "default": "false",
+      "description": "Enable/disable ChromaDB telemetry"
+    },
+    "PERSIST_DIRECTORY": {
+      "default": "/chroma/chroma",
+      "description": "Persistence directory inside container"
+    },
+    "IS_PERSISTENT": {
+      "default": "TRUE",
+      "description": "Enable persistent storage"
+    },
+    "CHROMA_THREAD_POOL": {
+      "default": "40",
+      "description": "Thread pool size for ChromaDB server"
+    }
+  },
   "ports": [
-    8000
+    8001
   ],
   "volumes": [
     "vector-db-data"

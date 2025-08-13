@@ -18,35 +18,37 @@ The embedding-pipeline package is a batch processing system that extracts medica
 
 ## Configuration
 
-### Environment Variables
-```bash
-# MySQL Configuration
-MYSQL_HOST=mysql
-MYSQL_PORT=3306
-MYSQL_DATABASE=openmrs
-MYSQL_USER=openmrs
-MYSQL_PASSWORD=openmrs
+Configuration is managed through the central `.env` file at the project root. Default values are defined in `packages/embedding-pipeline/package-metadata.json`.
 
-# ChromaDB Configuration
-CHROMADB_HOST=vector-db
-CHROMADB_PORT=8000
-CHROMA_AUTH_TOKEN=test-token
-CHROMA_COLLECTION=openmrs_concepts
+### Key Environment Variables
 
-# Embedding Model
-EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
-EMBEDDING_DIM=384
-EMBEDDING_BATCH_SIZE=32
-MODEL_CACHE_DIR=/app/data/cache
+**MySQL Configuration:**
+- `MYSQL_HOST` - Database host (default: `mysql`)
+- `MYSQL_PORT` - Database port (default: `3306`)
+- `MYSQL_DATABASE` - Database name (default: `openmrs`)
+- `MYSQL_USER` - Database user (default: `openmrs`)
+- `MYSQL_PASSWORD` - Database password (default: `openmrs`)
 
-# Pipeline Settings
-PIPELINE_MODE=full          # full, incremental, scheduled
-SCHEDULE_INTERVAL=daily     # daily, weekly, hourly
-SCHEDULE_TIME=02:00        # Time for scheduled runs
-CONCEPT_LIMIT=0            # 0 = no limit
-LOG_LEVEL=INFO
-DRY_RUN=false
-```
+**ChromaDB Configuration:**
+- `CHROMADB_HOST` - Vector DB host (default: `vector-db`)
+- `CHROMADB_PORT` - Vector DB port (default: `8000`)
+- `CHROMA_AUTH_TOKEN` - Auth token (default: `test-token`)
+- `CHROMA_COLLECTION` - Collection name (default: `openmrs_concepts`)
+
+**Embedding Configuration:**
+- `EMBEDDING_MODEL` - Model name (default: `sentence-transformers/all-MiniLM-L6-v2`)
+- `EMBEDDING_DIM` - Embedding dimensions (default: `384`)
+- `EMBEDDING_BATCH_SIZE` - Batch size (default: `32`)
+
+**Pipeline Settings:**
+- `PIPELINE_MODE` - Execution mode: full/incremental/scheduled (default: `full`)
+- `SCHEDULE_INTERVAL` - For scheduled mode: daily/weekly/hourly (default: `daily`)
+- `SCHEDULE_TIME` - Schedule time (default: `02:00`)
+- `CONCEPT_LIMIT` - Limit concepts, 0=no limit (default: `0`)
+- `LOG_LEVEL` - Logging level (default: `INFO`)
+- `DRY_RUN` - Test mode without storage (default: `false`)
+
+See `.env.example` for complete configuration.
 
 ## Deployment
 

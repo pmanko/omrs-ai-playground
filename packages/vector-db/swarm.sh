@@ -5,14 +5,15 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ACTION="${1:-deploy}"
 
-# Load environment variables
-if [ -f "$SCRIPT_DIR/.env" ]; then
-    export $(cat "$SCRIPT_DIR/.env" | grep -v '^#' | xargs)
+# Load environment variables from central .env if it exists
+ENV_FILE="${ENV_FILE:-../../.env}"
+if [ -f "$ENV_FILE" ]; then
+    export $(cat "$ENV_FILE" | grep -v '^#' | xargs)
 fi
 
-# Set default values
+# Set default values (these match package-metadata.json)
 export VECTOR_DB_IMAGE=${VECTOR_DB_IMAGE:-chromadb/chroma:latest}
-export VECTOR_DB_PORT=${VECTOR_DB_PORT:-8000}
+export VECTOR_DB_PORT=${VECTOR_DB_PORT:-8001}
 export CHROMA_AUTH_TOKEN=${CHROMA_AUTH_TOKEN:-test-token}
 export STACK_NAME=${STACK_NAME:-vector-db}
 

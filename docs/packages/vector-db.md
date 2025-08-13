@@ -11,27 +11,19 @@ The vector-db package provides a ChromaDB instance for storing and retrieving ve
 
 ## Configuration
 
-### Environment Variables
-```bash
-# Image configuration
-VECTOR_DB_IMAGE=chromadb/chroma:latest
-VECTOR_DB_PORT=8000
+Configuration is managed through the central `.env` file at the project root. Default values are defined in `packages/vector-db/package-metadata.json`.
 
-# Authentication
-CHROMA_AUTH_TOKEN=your-secure-token
-CHROMA_AUTH_PROVIDER=chromadb.auth.token.TokenAuthServerProvider
-CHROMA_AUTH_HEADER=AUTHORIZATION
+### Key Environment Variables
+- `VECTOR_DB_IMAGE` - Docker image (default: `chromadb/chroma:latest`)
+- `VECTOR_DB_PORT` - External port (default: `8001`) 
+- `CHROMA_AUTH_TOKEN` - Authentication token (default: `test-token`)
+- `CHROMA_AUTH_PROVIDER` - Auth provider class
+- `CHROMA_TELEMETRY` - Enable telemetry (default: `false`)
+- `PERSIST_DIRECTORY` - Storage path in container (default: `/chroma/chroma`)
+- `IS_PERSISTENT` - Enable persistence (default: `TRUE`)
+- `CHROMA_THREAD_POOL` - Thread pool size (default: `40`)
 
-# Storage
-PERSIST_DIRECTORY=/chroma/chroma
-IS_PERSISTENT=TRUE
-
-# Performance
-CHROMA_THREAD_POOL=40
-
-# Telemetry
-CHROMA_TELEMETRY=false
-```
+See `.env.example` for all available options.
 
 ## Deployment
 

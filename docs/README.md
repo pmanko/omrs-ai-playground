@@ -17,6 +17,7 @@
 - [Redis Cache](./packages/redis.md) - Redis for session management
 
 ## Deployment Guides
+- [Configuration Guide](./deployment/configuration.md) - Central configuration management
 - [Docker Swarm Setup](./deployment/swarm-setup.md) - Instructions for Docker Swarm deployment
 - [Development Setup](./deployment/dev-setup.md) - Local development environment setup
 

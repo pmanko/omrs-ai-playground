@@ -7,26 +7,80 @@
     "vector-db",
     "database-mysql"
   ],
-  "environmentVariables": [
-    "MYSQL_HOST",
-    "MYSQL_PORT",
-    "MYSQL_DATABASE",
-    "MYSQL_USER",
-    "MYSQL_PASSWORD",
-    "CHROMADB_HOST",
-    "CHROMADB_PORT",
-    "CHROMA_AUTH_TOKEN",
-    "CHROMA_COLLECTION",
-    "EMBEDDING_MODEL",
-    "EMBEDDING_DIM",
-    "EMBEDDING_BATCH_SIZE",
-    "PIPELINE_MODE",
-    "SCHEDULE_INTERVAL",
-    "SCHEDULE_TIME",
-    "CONCEPT_LIMIT",
-    "LOG_LEVEL",
-    "DRY_RUN"
-  ],
+  "environmentVariables": {
+    "MYSQL_HOST": {
+      "default": "mysql",
+      "description": "MySQL database hostname"
+    },
+    "MYSQL_PORT": {
+      "default": "3306",
+      "description": "MySQL database port"
+    },
+    "MYSQL_DATABASE": {
+      "default": "openmrs",
+      "description": "OpenMRS database name"
+    },
+    "MYSQL_USER": {
+      "default": "openmrs",
+      "description": "MySQL username"
+    },
+    "MYSQL_PASSWORD": {
+      "default": "openmrs",
+      "description": "MySQL password"
+    },
+    "CHROMADB_HOST": {
+      "default": "vector-db",
+      "description": "ChromaDB service hostname"
+    },
+    "CHROMADB_PORT": {
+      "default": "8000",
+      "description": "ChromaDB service port"
+    },
+    "CHROMA_AUTH_TOKEN": {
+      "default": "test-token",
+      "description": "ChromaDB authentication token"
+    },
+    "CHROMA_COLLECTION": {
+      "default": "openmrs_concepts",
+      "description": "ChromaDB collection name for concepts"
+    },
+    "EMBEDDING_MODEL": {
+      "default": "sentence-transformers/all-MiniLM-L6-v2",
+      "description": "Sentence transformer model for embeddings"
+    },
+    "EMBEDDING_DIM": {
+      "default": "384",
+      "description": "Embedding dimension size"
+    },
+    "EMBEDDING_BATCH_SIZE": {
+      "default": "32",
+      "description": "Batch size for embedding generation"
+    },
+    "PIPELINE_MODE": {
+      "default": "full",
+      "description": "Pipeline execution mode (full/incremental/scheduled)"
+    },
+    "SCHEDULE_INTERVAL": {
+      "default": "daily",
+      "description": "Schedule interval (daily/weekly/hourly)"
+    },
+    "SCHEDULE_TIME": {
+      "default": "02:00",
+      "description": "Time for scheduled runs"
+    },
+    "CONCEPT_LIMIT": {
+      "default": "0",
+      "description": "Limit concepts to process (0=no limit)"
+    },
+    "LOG_LEVEL": {
+      "default": "INFO",
+      "description": "Logging level"
+    },
+    "DRY_RUN": {
+      "default": "false",
+      "description": "Run without storing embeddings"
+    }
+  },
   "volumes": [
     "embedding-logs",
     "embedding-cache"
