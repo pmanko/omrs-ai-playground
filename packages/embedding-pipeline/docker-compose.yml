@@ -1,0 +1,70 @@
+services:
+  embedding-pipeline:
+    image: ${EMBEDDING_PIPELINE_IMAGE:-embedding-pipeline:latest}
+    hostname: embedding-pipeline
+    container_name: embedding-pipeline
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - instant
+    environment:
+      # MySQL Configuration
+      MYSQL_HOST: ${MYSQL_HOST:-mysql}
+      MYSQL_PORT: ${MYSQL_PORT:-3306}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-openmrs}
+      MYSQL_USER: ${MYSQL_USER:-openmrs}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-openmrs}
+      
+      # ChromaDB Configuration
+      CHROMADB_HOST: ${CHROMADB_HOST:-vector-db}
+      CHROMADB_PORT: ${CHROMADB_PORT:-8000}
+      CHROMA_AUTH_TOKEN: ${CHROMA_AUTH_TOKEN:-test-token}
+      CHROMA_COLLECTION: ${CHROMA_COLLECTION:-openmrs_concepts}
+      
+      # Embedding Model Configuration
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-sentence-transformers/all-MiniLM-L6-v2}
+      EMBEDDING_DIM: ${EMBEDDING_DIM:-384}
+      EMBEDDING_BATCH_SIZE: ${EMBEDDING_BATCH_SIZE:-32}
+      MODEL_CACHE_DIR: ${MODEL_CACHE_DIR:-/app/data/cache}
+      
+      # Pipeline Configuration
+      PIPELINE_MODE: ${PIPELINE_MODE:-full}
+      SCHEDULE_INTERVAL: ${SCHEDULE_INTERVAL:-daily}
+      SCHEDULE_TIME: ${SCHEDULE_TIME:-02:00}
+      CONCEPT_LIMIT: ${CONCEPT_LIMIT:-0}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DRY_RUN: ${DRY_RUN:-false}
+      
+    volumes:
+      - embedding-logs:/app/data/logs
+      - embedding-cache:/app/data/cache
+    depends_on:
+      - vector-db
+    restart: "no"  # One-shot container for batch processing
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+    command: ["python", "src/main.py", "--mode", "${PIPELINE_MODE:-full}"]
+
+  # Include the vector database service
+  vector-db:
+    extends:
+      file: ../vector-db/docker-compose.yml
+      service: vector-db
+
+networks:
+  instant:
+    external: true
+
+volumes:
+  embedding-logs:
+    driver: local
+  embedding-cache:
+    driver: local
+  vector-db-data:
+    driver: local

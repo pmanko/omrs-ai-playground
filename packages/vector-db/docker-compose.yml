@@ -1,0 +1,45 @@
+services:
+  vector-db:
+    image: ${VECTOR_DB_IMAGE:-chromadb/chroma:latest}
+    hostname: vector-db
+    container_name: vector-db
+    networks:
+      - instant
+    ports:
+      - "${VECTOR_DB_PORT:-8000}:8000"
+    environment:
+      # ChromaDB Configuration
+      CHROMA_SERVER_AUTH_PROVIDER: ${CHROMA_AUTH_PROVIDER:-chromadb.auth.token.TokenAuthServerProvider}
+      CHROMA_SERVER_AUTH_CREDENTIALS: ${CHROMA_AUTH_TOKEN:-test-token}
+      CHROMA_SERVER_AUTH_TOKEN_TRANSPORT_HEADER: ${CHROMA_AUTH_HEADER:-AUTHORIZATION}
+      ANONYMIZED_TELEMETRY: ${CHROMA_TELEMETRY:-false}
+      PERSIST_DIRECTORY: ${PERSIST_DIRECTORY:-/chroma/chroma}
+      IS_PERSISTENT: ${IS_PERSISTENT:-TRUE}
+      
+      # Performance settings
+      CHROMA_SERVER_THREAD_POOL_SIZE: ${CHROMA_THREAD_POOL:-40}
+      
+    volumes:
+      - vector-db-data:/chroma/chroma
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  instant:
+    external: true
+
+volumes:
+  vector-db-data:
+    driver: local

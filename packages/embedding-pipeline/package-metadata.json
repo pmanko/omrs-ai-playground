@@ -1,0 +1,35 @@
+{
+  "name": "embedding-pipeline",
+  "description": "Batch processing pipeline for generating OpenMRS concept embeddings",
+  "type": "batch",
+  "version": "1.0.0",
+  "dependencies": [
+    "vector-db",
+    "database-mysql"
+  ],
+  "environmentVariables": [
+    "MYSQL_HOST",
+    "MYSQL_PORT",
+    "MYSQL_DATABASE",
+    "MYSQL_USER",
+    "MYSQL_PASSWORD",
+    "CHROMADB_HOST",
+    "CHROMADB_PORT",
+    "CHROMA_AUTH_TOKEN",
+    "CHROMA_COLLECTION",
+    "EMBEDDING_MODEL",
+    "EMBEDDING_DIM",
+    "EMBEDDING_BATCH_SIZE",
+    "PIPELINE_MODE",
+    "SCHEDULE_INTERVAL",
+    "SCHEDULE_TIME",
+    "CONCEPT_LIMIT",
+    "LOG_LEVEL",
+    "DRY_RUN"
+  ],
+  "volumes": [
+    "embedding-logs",
+    "embedding-cache"
+  ],
+  "runMode": "batch"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "vector-db",
+  "description": "ChromaDB vector database for semantic search and embeddings storage",
+  "type": "infrastructure",
+  "version": "1.0.0",
+  "dependencies": [],
+  "environmentVariables": [
+    "VECTOR_DB_IMAGE",
+    "VECTOR_DB_PORT",
+    "CHROMA_AUTH_TOKEN",
+    "CHROMA_AUTH_PROVIDER",
+    "CHROMA_TELEMETRY",
+    "PERSIST_DIRECTORY",
+    "IS_PERSISTENT",
+    "CHROMA_THREAD_POOL"
+  ],
+  "ports": [
+    8000
+  ],
+  "volumes": [
+    "vector-db-data"
+  ]
+}
