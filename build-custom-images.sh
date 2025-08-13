@@ -95,6 +95,68 @@ build_custom_image() {
     fi
 }
 
+# Function to build multiagent_chat images (both server and client)
+build_multiagent_chat_images() {
+    local project_name="multiagent_chat"
+    local package_name="multiagent-chat"
+    
+    echo "🔨 Building Multi-Agent Chat images..."
+    
+    local project_dir="$PROJECT_ROOT/projects/$project_name"
+    if [[ ! -d "$project_dir" ]]; then
+        echo "❌ Project directory not found: $project_dir"
+        return 1
+    fi
+    
+    # Get image tags from environment/package metadata
+    local server_image=$(get_env_value "MULTIAGENT_CHAT_SERVER_IMAGE" "$package_name")
+    local client_image=$(get_env_value "MULTIAGENT_CHAT_CLIENT_IMAGE" "$package_name")
+    
+    if [[ -z "$server_image" || -z "$client_image" ]]; then
+        echo "⏭️  Skipping build for $project_name - image tags not set"
+        echo "   To enable building, set MULTIAGENT_CHAT_SERVER_IMAGE and MULTIAGENT_CHAT_CLIENT_IMAGE"
+        return 0
+    fi
+    
+    # Build server image
+    echo "🏗️  Building server image: $server_image"
+    cd "$project_dir"
+    
+    if [[ ! -f "Dockerfile.server" ]]; then
+        echo "❌ Server Dockerfile not found: $project_dir/Dockerfile.server"
+        return 1
+    fi
+    
+    sudo docker build -f Dockerfile.server -t "$server_image" .
+    if [[ $? -eq 0 ]]; then
+        echo "✅ Successfully built server image: $server_image"
+    else
+        echo "❌ Failed to build server image for $project_name"
+        return 1
+    fi
+    
+    # Build client image
+    echo "🏗️  Building client image: $client_image"
+    
+    if [[ ! -f "Dockerfile.client" ]]; then
+        echo "❌ Client Dockerfile not found: $project_dir/Dockerfile.client"
+        return 1
+    fi
+    
+    sudo docker build -f Dockerfile.client -t "$client_image" .
+    if [[ $? -eq 0 ]]; then
+        echo "✅ Successfully built client image: $client_image"
+        echo ""
+        echo "Both Multi-Agent Chat images are ready to use:"
+        echo "   Server: $server_image"
+        echo "   Client: $client_image"
+        echo ""
+    else
+        echo "❌ Failed to build client image for $project_name"
+        return 1
+    fi
+}
+
 # Main execution
 echo "🚀 Building custom Docker images..."
 echo "Project root: $PROJECT_ROOT"
@@ -108,16 +170,19 @@ fi
 
 # Build custom images for each project
 if [[ $# -eq 0 ]]; then
-    # Build omrs-appo-service by default
-    echo "🎯 Building default project: omrs-appo-service"
+    # Build all supported projects by default
+    echo "🎯 Building all supported projects..."
     build_custom_image "omrs-appo-service" "omrs-appo-service"
+    build_multiagent_chat_images
 else
     # Build specific projects
     for project_name in "$@"; do
         if [[ "$project_name" == "omrs-appo-service" ]]; then
             build_custom_image "$project_name" "omrs-appo-service"
+        elif [[ "$project_name" == "multiagent_chat" || "$project_name" == "multiagent-chat" ]]; then
+            build_multiagent_chat_images
         else
-            echo "⚠️  Skipping unsupported project: $project_name. Only 'omrs-appo-service' is supported."
+            echo "⚠️  Skipping unsupported project: $project_name. Supported: 'omrs-appo-service', 'multiagent_chat'"
         fi
     done
 fi

@@ -1,0 +1,101 @@
+services:
+  multiagent-chat-server:
+    image: ${MULTIAGENT_CHAT_SERVER_IMAGE:-multiagent-chat-server:latest}
+    hostname: multiagent-chat-server
+    container_name: multiagent-chat-server
+    networks:
+      - instant
+    ports:
+      - "3000:3000"
+    environment:
+      # LLM Configuration
+      LLM_BASE_URL: ${LLM_BASE_URL:-http://localhost:1234}
+      LLM_API_KEY: ${LLM_API_KEY}
+      GENERAL_MODEL: ${GENERAL_MODEL:-llama-3-8b-instruct}
+      MED_MODEL: ${MED_MODEL:-medgemma-2}
+      LLM_TEMPERATURE: ${LLM_TEMPERATURE:-0.2}
+      
+      # Orchestrator Configuration
+      ORCHESTRATOR_PROVIDER: ${ORCHESTRATOR_PROVIDER:-openai}
+      ORCHESTRATOR_MODEL: ${ORCHESTRATOR_MODEL:-llama-3-8b-instruct}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      
+      # A2A Configuration
+      ENABLE_A2A: ${ENABLE_A2A:-true}
+      ENABLE_A2A_NATIVE: ${ENABLE_A2A_NATIVE:-false}
+      CHAT_TIMEOUT_SECONDS: ${CHAT_TIMEOUT_SECONDS:-90}
+      
+      # A2A Service URLs (for native mode)
+      A2A_ROUTER_URL: ${A2A_ROUTER_URL:-http://localhost:9100}
+      A2A_MEDGEMMA_URL: ${A2A_MEDGEMMA_URL:-http://localhost:9101}
+      A2A_CLINICAL_URL: ${A2A_CLINICAL_URL:-http://localhost:9102}
+      
+      # OpenMRS FHIR Configuration
+      OPENMRS_FHIR_BASE_URL: ${OPENMRS_FHIR_BASE_URL}
+      OPENMRS_USERNAME: ${OPENMRS_USERNAME}
+      OPENMRS_PASSWORD: ${OPENMRS_PASSWORD}
+      
+      # Spark Thrift Configuration
+      SPARK_THRIFT_HOST: ${SPARK_THRIFT_HOST}
+      SPARK_THRIFT_PORT: ${SPARK_THRIFT_PORT:-10000}
+      SPARK_THRIFT_DATABASE: ${SPARK_THRIFT_DATABASE:-default}
+      SPARK_THRIFT_USER: ${SPARK_THRIFT_USER}
+      SPARK_THRIFT_PASSWORD: ${SPARK_THRIFT_PASSWORD}
+      
+      # Local FHIR Parquet Directory
+      FHIR_PARQUET_DIR: ${FHIR_PARQUET_DIR}
+    volumes:
+      - multiagent-logs:/app/logs
+      - multiagent-data:/app/data
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  multiagent-chat-client:
+    image: ${MULTIAGENT_CHAT_CLIENT_IMAGE:-multiagent-chat-client:latest}
+    hostname: multiagent-chat-client
+    container_name: multiagent-chat-client
+    networks:
+      - instant
+    ports:
+      - "8080:80"
+    environment:
+      # Optional: Override API base URL if needed
+      API_BASE_URL: ${API_BASE_URL:-http://multiagent-chat-server:3000}
+    depends_on:
+      - multiagent-chat-server
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  instant:
+    external: true
+
+volumes:
+  multiagent-logs:
+    driver: local
+  multiagent-data:
+    driver: local
