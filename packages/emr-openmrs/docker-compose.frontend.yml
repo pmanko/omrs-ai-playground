@@ -1,0 +1,19 @@
+services:
+  openmrs-frontend:
+    image: openmrs/openmrs-reference-application-3-frontend:${TAG:-qa}
+    environment:
+      SPA_PATH: /openmrs/spa
+      API_URL: /openmrs
+      SPA_CONFIG_URLS: /openmrs/spa/config-core_demo.json
+      SPA_DEFAULT_LOCALE:
+    networks:
+      - openmrs_default
+      - reverse-proxy_public
+
+networks:
+  openmrs_default:
+    name: openmrs_default
+    external: true
+  reverse-proxy_public:
+    name: reverse-proxy_public
+    external: true

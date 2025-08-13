@@ -1,0 +1,15 @@
+{
+  "id": "database-mysql",
+  "name": "MySQL Database Package",
+  "description": "MySQL Database Package using custom MySQL 5.7 image",
+  "type": "infrastructure",
+  "version": "0.1.0",
+  "dependencies": [],
+  "environmentVariables": {
+    "MYSQL_IMAGE": "mariadb:10.11.7",
+    "MYSQL_ROOT_PASSWORD": "root_password",
+    "MYSQL_DATABASE": "openmrs",
+    "MYSQL_USER": "openmrs",
+    "MYSQL_PASSWORD": "openmrs"
+  }
+}

@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,10 +21,16 @@ import com.example.omrsappo.ui.screens.viewmodels.ChatViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
+    welcomeMessage: String = "Hello! I'm here to help you schedule an appointment. Please describe what you need an appointment for.",
     viewModel: ChatViewModel = hiltViewModel()
 ) {
     val chatState by viewModel.chatState.collectAsState()
     var messageText by remember { mutableStateOf("") }
+
+    // Initialize with welcome message
+    LaunchedEffect(welcomeMessage) {
+        viewModel.initializeWithWelcomeMessage(welcomeMessage)
+    }
 
     Scaffold(
         topBar = {
@@ -98,7 +104,7 @@ fun ChatScreen(
                     enabled = messageText.isNotBlank() && !chatState.isLoading
                 ) {
                     Icon(
-                        Icons.AutoMirrored.Filled.Send,
+                        Icons.Filled.Send,
                         contentDescription = stringResource(R.string.send_button)
                     )
                 }

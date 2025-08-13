@@ -29,14 +29,18 @@ class ChatViewModel @Inject constructor(
     private val _chatState = MutableStateFlow(ChatState())
     val chatState: StateFlow<ChatState> = _chatState.asStateFlow()
 
-    init {
-        // Add initial greeting message
-        val greetingMessage = ChatMessage(
-            id = UUID.randomUUID().toString(),
-            content = "Hello! I'm here to help you schedule an appointment. Please describe what you need an appointment for.",
-            isUser = false
-        )
-        _chatState.value = ChatState(messages = listOf(greetingMessage))
+    private var isInitialized = false
+
+    fun initializeWithWelcomeMessage(welcomeMessage: String) {
+        if (!isInitialized) {
+            val greetingMessage = ChatMessage(
+                id = UUID.randomUUID().toString(),
+                content = welcomeMessage,
+                isUser = false
+            )
+            _chatState.value = ChatState(messages = listOf(greetingMessage))
+            isInitialized = true
+        }
     }
 
     fun sendMessage(message: String) {

@@ -1,0 +1,31 @@
+services:
+  openmrs:
+    image: openmrs/openmrs-reference-application-3-backend:${TAG:-qa}
+    environment:
+      OMRS_CONFIG_MODULE_WEB_ADMIN: "true"
+      OMRS_CONFIG_AUTO_UPDATE_DATABASE: "true"
+      OMRS_CONFIG_CREATE_TABLES: "true"
+      OMRS_CONFIG_CONNECTION_SERVER: mysql
+      OMRS_CONFIG_CONNECTION_DATABASE: openmrs
+      OMRS_CONFIG_CONNECTION_USERNAME: ${OMRS_DB_USER:-openmrs}
+      OMRS_CONFIG_CONNECTION_PASSWORD: ${OMRS_DB_PASSWORD:-openmrs}
+    volumes:
+      - openmrs-data:/openmrs/data
+    networks:
+      - openmrs_default
+      - mysql_default
+      - reverse-proxy_public
+
+volumes:
+  openmrs-data:
+
+networks:
+  openmrs_default:
+    name: openmrs_default
+    external: true
+  mysql_default:
+    name: mysql_default
+    external: true
+  reverse-proxy_public:
+    name: reverse-proxy_public
+    external: true

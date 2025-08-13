@@ -1,0 +1,12 @@
+projectName: omrs-appo
+image: omrs-appo:latest
+logPath: /tmp/logs
+
+packages:
+  - database-mysql
+  - emr-openmrs
+  - redis
+  - omrs-appo-service
+  - reverse-proxy-nginx
+
+
