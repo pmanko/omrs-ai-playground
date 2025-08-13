@@ -1,5 +1,5 @@
-projectName: omrs-appo
-image: omrs-appo:latest
+projectName: omrs-ai-playground
+image: omrs-ai-playground:latest
 logPath: /tmp/logs
 
 packages:
