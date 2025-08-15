@@ -1,0 +1,5 @@
+# Optional Flink configuration overrides
+parallelism.default: 1
+taskmanager.numberOfTaskSlots: 1
+
+

@@ -1,0 +1,4 @@
+services:
+  omrs-appo-service:
+    ports:
+      - "${OMRS_APPO_SERVICE_PORT:-3050}:8000"

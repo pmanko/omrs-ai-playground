@@ -1,0 +1,68 @@
+services:
+  pipeline-controller:
+    image: ${CONTROLLER_IMAGE:-us-docker.pkg.dev/cloud-build-fhir/fhir-analytics/main:latest}
+    hostname: pipeline-controller
+    environment:
+      - JAVA_OPTS=${JAVA_OPTS:-}
+    configs:
+      - target: /app/config/application.yaml
+        source: application_yaml
+      - target: /app/config/flink-conf.yaml
+        source: flink_conf_yaml
+      - target: /app/config/thriftserver-hive-config_local.json
+        source: thriftserver_hive_config_json
+      - target: /app/config/hapi-postgres-config_local.json
+        source: hapi_postgres_config_json
+      - target: /app/config/hapi-postgres-config_local_views.json
+        source: hapi_postgres_views_config_json
+    volumes:
+      - ohs-dwh:/dwh
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -fsS http://localhost:8080/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - instant
+      - hapi-fhir_public
+    depends_on:
+      - spark
+
+volumes:
+  ohs-dwh:
+    driver: local
+
+networks:
+  instant:
+    external: true
+  hapi-fhir_public:
+    external: true
+
+configs:
+  application_yaml:
+    file: ./config/application.yaml
+    name: application.yaml
+    labels:
+      name: analytics-ohs-data-pipes
+  flink_conf_yaml:
+    file: ./config/flink-conf.yaml
+    name: flink-conf.yaml
+    labels:
+      name: analytics-ohs-data-pipes
+  thriftserver_hive_config_json:
+    file: ./config/thriftserver-hive-config_local.json
+    name: thriftserver-hive-config
+    labels:
+      name: analytics-ohs-data-pipes
+  hapi_postgres_config_json:
+    file: ./config/hapi-postgres-config_local.json
+    name: hapi-postgres-config
+    labels:
+      name: analytics-ohs-data-pipes
+  hapi_postgres_views_config_json:
+    file: ./config/hapi-postgres-config_local_views.json
+    name: hapi-postgres-views-config
+    labels:
+      name: analytics-ohs-data-pipes
+

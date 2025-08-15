@@ -5,8 +5,6 @@ services:
     container_name: multiagent-chat-server
     networks:
       - instant
-    ports:
-      - "3000:3000"
     environment:
       # LLM Configuration
       LLM_BASE_URL: ${LLM_BASE_URL:-http://localhost:1234}
@@ -62,33 +60,7 @@ services:
       retries: 3
       start_period: 40s
 
-  multiagent-chat-client:
-    image: ${MULTIAGENT_CHAT_CLIENT_IMAGE:-multiagent-chat-client:latest}
-    hostname: multiagent-chat-client
-    container_name: multiagent-chat-client
-    networks:
-      - instant
-    ports:
-      - "8080:80"
-    environment:
-      # Optional: Override API base URL if needed
-      API_BASE_URL: ${API_BASE_URL:-http://multiagent-chat-server:3000}
-    depends_on:
-      - multiagent-chat-server
-    restart: unless-stopped
-    deploy:
-      replicas: 1
-      resources:
-        limits:
-          memory: 256M
-        reservations:
-          memory: 128M
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+  # Client is defined in a separate compose file (docker-compose.client.yml)
 
 networks:
   instant:

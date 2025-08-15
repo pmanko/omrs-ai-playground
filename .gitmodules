@@ -6,3 +6,6 @@
 	path = projects/multiagent_chat
 	url = https://github.com/pmanko/medgemma_chat.git
 	branch = multiagent
+[submodule "projects/fhir-data-pipes"]
+	path = projects/fhir-data-pipes
+	url = https://github.com/google/fhir-data-pipes.git

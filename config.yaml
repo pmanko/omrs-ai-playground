@@ -8,5 +8,8 @@ packages:
   - redis
   - omrs-appo-service
   - reverse-proxy-nginx
+  - analytics-ohs-data-pipes
+  - fhir-datastore-hapi-fhir
+  - multiagent-chat
 
 

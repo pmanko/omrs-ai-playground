@@ -1,0 +1,48 @@
+fhirdata:
+  # Choose how to fetch FHIR data. For initial setup use FHIR search over REST.
+  # Valid: FHIR_SEARCH | BULK_EXPORT | HAPI_JDBC | OPENMRS_JDBC | JSON | NDJSON | PARQUET
+  fhirFetchMode: "FHIR_SEARCH"
+
+  # URL to the source FHIR server. If the controller joins the same Docker network
+  # as HAPI FHIR, this internal URL works; otherwise adjust to a reachable host URL.
+  # Example internal: http://hapi-fhir:8080/fhir
+  # Example external: http://localhost:3447/fhir
+  fhirServerUrl: "http://hapi-fhir:8080/fhir"
+
+  # Parquet-on-FHIR warehouse root mounted into the container
+  dwhRootPrefix: "/dwh/controller_DWH"
+
+  # Create Parquet files and Hive resource tables/views
+  generateParquetFiles: false
+  
+  createHiveResourceTables: true
+  createParquetViews: true
+  # Paths to Hive/Thrift and view definitions provided via Docker configs
+  thriftserverHiveConfig: "config/thriftserver-hive-config_local.json"
+  hiveResourceViewsDir: "config/views"
+  viewDefinitionsDir: "config/views"
+  # sinkDbConfigPath: "config/hapi-postgres-config_local_views.json"
+  # Note: No fhirdata.dbConfig when using FHIR_SEARCH fetch mode
+
+  # Schedules (Spring cron, 6-fields: sec min hour day month day-of-week)
+  incrementalSchedule: "0 0 2 * * *"   # nightly at 02:00
+  purgeSchedule: "0 30 2 * * *"        # nightly at 02:30
+
+  # Keep 2 snapshots of the DWH
+  numOfDwhSnapshotsToRetain: 2
+
+  # Resource types to extract
+  resourceList: "Patient,Encounter,Observation"
+
+  # Auto-tune Flink configuration if not explicitly provided
+  autoGenerateFlinkConfiguration: true
+
+  # FHIR version and Parquet tuning
+  fhirVersion: "R4"
+  rowGroupSizeForParquetFiles: 33554432   # 32mb
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,pipeline-metrics

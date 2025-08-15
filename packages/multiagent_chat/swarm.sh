@@ -37,14 +37,23 @@ function import_sources() {
 }
 
 function initialize_package() {
+  local server_dev_compose_filename=""
+  local client_dev_compose_filename=""
+
   if [ "${MODE}" == "dev" ]; then
     log info "Running package in DEV mode"
+    server_dev_compose_filename="docker-compose.server.dev.yml"
+    client_dev_compose_filename="docker-compose.client.dev.yml"
   else
     log info "Running package in PROD mode"
   fi
 
   (
-    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.yml"
+    # Deploy server (base compose is server-only)
+    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.yml" "" "$server_dev_compose_filename"
+
+    # Deploy client (separate compose); pass dev override if in dev
+    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.client.yml" "" "$client_dev_compose_filename"
   ) ||
     {
       log error "Failed to deploy package"

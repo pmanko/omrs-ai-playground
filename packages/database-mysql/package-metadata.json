@@ -10,6 +10,7 @@
     "MYSQL_ROOT_PASSWORD": "root_password",
     "MYSQL_DATABASE": "openmrs",
     "MYSQL_USER": "openmrs",
-    "MYSQL_PASSWORD": "openmrs"
+    "MYSQL_PASSWORD": "openmrs",
+    "MYSQL_PORT": "3336"
   }
 }

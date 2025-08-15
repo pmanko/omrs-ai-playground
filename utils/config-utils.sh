@@ -5,7 +5,9 @@
 #
 # For functions using `declare -n`, note the following explanation https://linuxhint.com/bash_declare_command/#:~:text=giving%20them%20attributes.-,Namerefs,-If%20you%20are
 
-. "$(pwd)/utils/log.sh"
+# Get the directory of this script to source log.sh relatively
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "${SCRIPT_DIR}/log.sh"
 
 # Sets the digest variables for the conf raft files in the provided docker compose file
 #

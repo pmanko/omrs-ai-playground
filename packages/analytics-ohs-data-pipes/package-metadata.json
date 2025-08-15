@@ -1,0 +1,27 @@
+{
+  "id": "analytics-ohs-data-pipes",
+  "name": "Open Health Stack - FHIR Data Pipes",
+  "description": "ETL pipelines to transform FHIR data into a Parquet-based SQL-on-FHIR warehouse, with a controller and Spark Thrift for analytics.",
+  "type": "infrastructure",
+  "version": "0.1.0",
+  "dependencies": [],
+  "environmentVariables": {
+    "FHIR_DATA_PIPES_IMAGE": "omrs/fhir-data-pipes:dev",
+    "CONTROLLER_IMAGE": "omrs/fhir-data-pipes:dev",
+    "SPARK_IMAGE": "docker.io/bitnami/spark:3.3",
+    "JAVA_OPTS": "",
+    "PIPELINE_CONFIG": "./config",
+    "PIPELINE_CONFIG_ABS": "/home/pmanko/code/omrs-ai-playground/projects/fhir-data-pipes/pipelines/controller/config",
+    "DWH_ROOT": "/dwh",
+
+    "SOURCE_FHIR_BASE_URL": "",
+    "SOURCE_FHIR_USERNAME": "",
+    "SOURCE_FHIR_PASSWORD": "",
+    "RUN_MODE": "full",
+    "SCHEDULE_CRON": "0 0 2 * * *",
+    "ANALYTICS_CONTROLLER_PORT": "8092",
+    "ANALYTICS_SPARK_THRIFT_PORT": "10001",
+    "ANALYTICS_SPARK_UI_PORT": "4041"
+  }
+}
+

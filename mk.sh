@@ -11,8 +11,18 @@
 
 # ./instant package destroy -n emr-openmrs
 # ./instant package init -n emr-openmrs -d
-./instant package down -n emr-openmrs
-./instant package up -n emr-openmrs -d
+# ./instant package down -n emr-openmrs
+# ./instant package up -n emr-openmrs -d
+
+# ./instant package destroy -n fhir-datastore-hapi-fhir
+# ./instant package init -n fhir-datastore-hapi-fhir -d 
+
+./instant package destroy -n analytics-ohs-data-pipes
+./instant package init -n analytics-ohs-data-pipes -d 
+
+
+# ./instant package destroy -n multiagent-chat
+# ./instant package init -n multiagent-chat -d 
 
 # ./instant package destroy -n redis
 # ./instant package init -n redis -d
@@ -20,8 +30,8 @@
 # ./instant package destroy -n omrs-appo-service
 # ./instant package init -n omrs-appo-service -d
 
-./instant package destroy -n reverse-proxy-nginx
-./instant package init -n reverse-proxy-nginx
+# ./instant package destroy -n reverse-proxy-nginx
+# ./instant package init -n reverse-proxy-nginx
 
 
 

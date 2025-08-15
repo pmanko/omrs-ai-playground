@@ -30,4 +30,4 @@ if [ -z "$1" ]; then
     fi
 fi
 
-sudo docker build -t omrs-ai-playground:"$TAG_NAME" . --no-cache
+docker build -t omrs-ai-playground:"$TAG_NAME" . --no-cache

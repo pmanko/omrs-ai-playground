@@ -2,4 +2,4 @@ services:
   
   openmrs-gateway:
     ports:
-      - "8080:80"
+      - "${OMRS_GATEWAY_PORT:-8090}:80"

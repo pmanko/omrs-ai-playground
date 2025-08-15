@@ -1,5 +1,5 @@
 services:
   openmrs:
     ports:
-      - "8888:8080"
+      - "${OMRS_BACKEND_PORT:-8888}:8080"
 

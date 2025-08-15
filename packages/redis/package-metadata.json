@@ -6,6 +6,7 @@
   "version": "1.0.0",
   "dependencies": [],
   "environmentVariables": {
-    "REDIS_IMAGE": "redis:7.2.5-alpine"
+    "REDIS_IMAGE": "redis:7.2.5-alpine",
+    "REDIS_PORT": "6379"
   }
 } 
