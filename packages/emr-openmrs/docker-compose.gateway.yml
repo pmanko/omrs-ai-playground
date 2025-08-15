@@ -6,6 +6,7 @@ services:
         source: openmrs-gateway.conf
     networks:
       - openmrs_default
+      - reverse-proxy_public
 
 configs:
   openmrs-gateway.conf:
@@ -17,4 +18,7 @@ configs:
 networks:
   openmrs_default:
     name: openmrs_default
+    external: true
+  reverse-proxy_public:
+    name: reverse-proxy_public
     external: true

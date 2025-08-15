@@ -12,7 +12,7 @@
     "NGINX_MEMORY_LIMIT": "3G",
     "NGINX_MEMORY_RESERVE": "500M",
     "DOMAIN_NAME": "omrs-appo.live",
-    "SUBDOMAINS": "www.omrs-appo.live,service.omrs-appo.live,openmrs.omrs-appo.live",
+    "SUBDOMAINS": "www.omrs-appo.live,service.omrs-appo.live",
     "RENEWAL_EMAIL": "dummy@omrs.org",
     "STAGING": "false",
     "INSECURE": "false",

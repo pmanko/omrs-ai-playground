@@ -44,8 +44,7 @@ function initialize_package() {
   if [ ! -d "$HOST_DATA_DIR" ]; then
     log info "Creating directory for MySQL data: $HOST_DATA_DIR"
     mkdir -p "$HOST_DATA_DIR"
-    # Adjust permissions as needed, e.g.:
-    # chown 1001:1001 "$HOST_DATA_DIR"
+
   fi
 
   if [ "${MODE}" == "dev" ]; then

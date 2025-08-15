@@ -9,6 +9,7 @@ services:
       OMRS_CONFIG_CONNECTION_DATABASE: openmrs
       OMRS_CONFIG_CONNECTION_USERNAME: ${OMRS_DB_USER:-openmrs}
       OMRS_CONFIG_CONNECTION_PASSWORD: ${OMRS_DB_PASSWORD:-openmrs}
+      OMRS_CONFIG_ADD_DEMO_DATA: "true"
     volumes:
       - openmrs-data:/openmrs/data
     networks:
