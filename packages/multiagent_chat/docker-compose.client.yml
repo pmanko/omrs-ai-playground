@@ -2,9 +2,8 @@ services:
   multiagent-chat-client:
     image: ${MULTIAGENT_CHAT_CLIENT_IMAGE:-multiagent-chat-client:latest}
     hostname: multiagent-chat-client
-    container_name: multiagent-chat-client
     networks:
-      - instant
+      - multiagent
     environment:
       # Optional: Override API base URL if needed
       API_BASE_URL: ${API_BASE_URL:-http://multiagent-chat-server:3000}
@@ -26,6 +25,6 @@ services:
       start_period: 10s
 
 networks:
-  instant:
+  multiagent:
     external: true
-
+    name: multiagent_public

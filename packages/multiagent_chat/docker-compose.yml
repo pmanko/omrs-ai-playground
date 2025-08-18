@@ -2,9 +2,10 @@ services:
   multiagent-chat-server:
     image: ${MULTIAGENT_CHAT_SERVER_IMAGE:-multiagent-chat-server:latest}
     hostname: multiagent-chat-server
-    container_name: multiagent-chat-server
     networks:
-      - instant
+      - multiagent
+      - openmrs
+      - open-health-stack
     environment:
       # LLM Configuration
       LLM_BASE_URL: ${LLM_BASE_URL:-http://localhost:1234}
@@ -63,8 +64,15 @@ services:
   # Client is defined in a separate compose file (docker-compose.client.yml)
 
 networks:
-  instant:
+  multiagent:
+    name: multiagent_public
     external: true
+  openmrs:
+    external: true
+    name: openmrs_public
+  open-health-stack: 
+    external: true
+    name: open-health-stack
 
 volumes:
   multiagent-logs:

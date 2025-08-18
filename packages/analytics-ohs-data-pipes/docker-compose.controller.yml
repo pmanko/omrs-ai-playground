@@ -24,7 +24,7 @@ services:
       retries: 5
       start_period: 10s
     networks:
-      - instant
+      - multiagent
       - hapi-fhir_public
     depends_on:
       - spark
@@ -34,9 +34,11 @@ volumes:
     driver: local
 
 networks:
-  instant:
+  open-health-stack:
+    name: open-health-stack
     external: true
-  hapi-fhir_public:
+  hapi-fhir:
+    name: hapi-fhir_public
     external: true
 
 configs:
