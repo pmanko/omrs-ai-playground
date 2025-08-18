@@ -1,0 +1,30 @@
+services:
+  spark:
+    image: ${SPARK_IMAGE:-docker.io/bitnami/spark:3.3}
+    hostname: spark-thriftserver
+    container_name: spark-thriftserver
+    command:
+      - sbin/start-thriftserver.sh
+      - --driver-memory
+      - 5g
+    environment:
+      - HIVE_SERVER2_THRIFT_PORT=10000
+    volumes:
+      - ohs-dwh:/dwh
+    networks:
+      - instant
+    healthcheck:
+      test: beeline help || exit 1
+      interval: 10s
+      retries: 10
+      start_period: 5s
+      timeout: 60s
+
+volumes:
+  ohs-dwh:
+    driver: local
+
+networks:
+  instant:
+    external: true
+

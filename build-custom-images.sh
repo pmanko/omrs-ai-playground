@@ -30,9 +30,13 @@ get_env_value() {
         fi
     fi
     
-    # Check package metadata file
+    # Check package metadata file (supports both hyphen and underscore folder names)
     if [[ -n "$package_name" ]]; then
         local metadata_file="$PROJECT_ROOT/packages/$package_name/package-metadata.json"
+        if [[ ! -f "$metadata_file" ]]; then
+            local alt_package_name="${package_name//-/_}"
+            metadata_file="$PROJECT_ROOT/packages/$alt_package_name/package-metadata.json"
+        fi
         if [[ -f "$metadata_file" ]]; then
             local metadata_value=$(jq -r ".environmentVariables.${var_name} // empty" "$metadata_file" 2>/dev/null)
             if [[ -n "$metadata_value" && "$metadata_value" != "null" ]]; then
@@ -81,7 +85,7 @@ build_custom_image() {
     echo "🏗️  Building custom image: $image_tag"
 
     cd "$project_dir"
-    sudo docker build -t "$image_tag" .
+    docker build -t "$image_tag" .
 
     if [[ $? -eq 0 ]]; then
         echo "✅ Successfully built custom image: $image_tag"
@@ -92,6 +96,108 @@ build_custom_image() {
     else
         echo "❌ Failed to build custom image for $project_name"
         return 1
+    fi
+}
+
+# Function to build multiagent_chat images (both server and client)
+build_multiagent_chat_images() {
+    local project_name="multiagent_chat"
+    local package_name="multiagent-chat"
+    
+    echo "🔨 Building Multi-Agent Chat images..."
+    
+    local project_dir="$PROJECT_ROOT/projects/$project_name"
+    if [[ ! -d "$project_dir" ]]; then
+        echo "❌ Project directory not found: $project_dir"
+        return 1
+    fi
+    
+    # Get image tags from environment/package metadata
+    local server_image=$(get_env_value "MULTIAGENT_CHAT_SERVER_IMAGE" "$package_name")
+    local client_image=$(get_env_value "MULTIAGENT_CHAT_CLIENT_IMAGE" "$package_name")
+    
+    if [[ -z "$server_image" || -z "$client_image" ]]; then
+        echo "⏭️  Skipping build for $project_name - image tags not set"
+        echo "   To enable building, set MULTIAGENT_CHAT_SERVER_IMAGE and MULTIAGENT_CHAT_CLIENT_IMAGE"
+        return 0
+    fi
+    
+    # Build server image
+    echo "🏗️  Building server image: $server_image"
+    cd "$project_dir"
+    
+    if [[ ! -f "Dockerfile.server" ]]; then
+        echo "❌ Server Dockerfile not found: $project_dir/Dockerfile.server"
+        return 1
+    fi
+    
+    docker build -f Dockerfile.server -t "$server_image" .
+    if [[ $? -eq 0 ]]; then
+        echo "✅ Successfully built server image: $server_image"
+    else
+        echo "❌ Failed to build server image for $project_name"
+        return 1
+    fi
+    
+    # Build client image
+    echo "🏗️  Building client image: $client_image"
+    
+    if [[ ! -f "Dockerfile.client" ]]; then
+        echo "❌ Client Dockerfile not found: $project_dir/Dockerfile.client"
+        return 1
+    fi
+    
+    docker build -f Dockerfile.client -t "$client_image" .
+    if [[ $? -eq 0 ]]; then
+        echo "✅ Successfully built client image: $client_image"
+        echo ""
+        echo "Both Multi-Agent Chat images are ready to use:"
+        echo "   Server: $server_image"
+        echo "   Client: $client_image"
+        echo ""
+    else
+        echo "❌ Failed to build client image for $project_name"
+        return 1
+    fi
+}
+
+# Function to build synthetic data images (uploader and generator)
+build_synthea_images() {
+    local project_dir="$PROJECT_ROOT/projects/synthetic-data-uploader"
+    if [[ ! -d "$project_dir" ]]; then
+        echo "❌ Project directory not found: $project_dir"
+        return 1
+    fi
+
+    local uploader_image=$(get_env_value "SYNTHEA_UPLOADER_IMAGE" "emr-openmrs")
+    local generator_image=$(get_env_value "SYNTHEA_GENERATOR_IMAGE" "emr-openmrs")
+
+    if [[ -z "$uploader_image" && -z "$generator_image" ]]; then
+        echo "⏭️  Skipping build for synthetic-data-uploader - image tags not set"
+        echo "   To enable building, set SYNTHEA_UPLOADER_IMAGE and/or SYNTHEA_GENERATOR_IMAGE"
+        return 0
+    fi
+
+    cd "$project_dir"
+
+    if [[ -n "$uploader_image" ]]; then
+        if [[ ! -f "Dockerfile.uploader" ]]; then
+            echo "❌ Dockerfile.uploader not found: $project_dir/Dockerfile.uploader"
+            return 1
+        fi
+        echo "🏗️  Building uploader image: $uploader_image"
+        docker build -f Dockerfile.uploader -t "$uploader_image" . || return 1
+        echo "✅ Successfully built uploader image: $uploader_image"
+    fi
+
+    if [[ -n "$generator_image" ]]; then
+        if [[ -f "generator/Dockerfile" ]]; then
+            echo "🏗️  Building generator image: $generator_image"
+            docker build -f generator/Dockerfile -t "$generator_image" generator || return 1
+            echo "✅ Successfully built generator image: $generator_image"
+        else
+            echo "⚠️  generator/Dockerfile not found; skipping generator image"
+        fi
     fi
 }
 
@@ -108,16 +214,25 @@ fi
 
 # Build custom images for each project
 if [[ $# -eq 0 ]]; then
-    # Build omrs-appo-service by default
-    echo "🎯 Building default project: omrs-appo-service"
+    # Build all supported projects by default
+    echo "🎯 Building all supported projects..."
     build_custom_image "omrs-appo-service" "omrs-appo-service"
+    build_custom_image "fhir-data-pipes" "analytics-ohs-data-pipes"
+    build_multiagent_chat_images
+    build_synthea_images
 else
     # Build specific projects
     for project_name in "$@"; do
         if [[ "$project_name" == "omrs-appo-service" ]]; then
             build_custom_image "$project_name" "omrs-appo-service"
+        elif [[ "$project_name" == "multiagent_chat" || "$project_name" == "multiagent-chat" ]]; then
+            build_multiagent_chat_images
+        elif [[ "$project_name" == "synthetic-data-uploader" ]]; then
+            build_synthea_images
+        elif [[ "$project_name" == "fhir-data-pipes" ]]; then
+            build_custom_image "$project_name" "analytics-ohs-data-pipes"
         else
-            echo "⚠️  Skipping unsupported project: $project_name. Only 'omrs-appo-service' is supported."
+            echo "⚠️  Skipping unsupported project: $project_name. Supported: 'omrs-appo-service', 'multiagent_chat'"
         fi
     done
 fi

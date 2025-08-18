@@ -1,0 +1,33 @@
+FROM python:3.11-slim
+
+LABEL maintainer="Multi-Agent Chat Team"
+LABEL description="Synthea HIV uploader - posts NDJSON/JSON bundles to a FHIR endpoint"
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# System deps for SSL/certs and curl for basic debugging
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy vendored Synthea HIV project (uploader + sample_data)
+COPY . /app
+
+# Minimal Python deps for uploader script
+RUN pip install --no-cache-dir requests google-auth tqdm
+
+# Default dataset roots inside the image
+# Map: small -> sample_data_small, full -> sample_data
+ENV DATA_ROOT=/app/sample_data \
+    SMALL_DIR=sample_data_small \
+    FULL_DIR=sample_data
+
+# Entrypoint wrapper expects envs and invokes uploader
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+

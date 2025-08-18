@@ -21,6 +21,7 @@
     "SERVICE_HOST": "0.0.0.0",
     "LOG_LEVEL": "INFO",
     "ENVIRONMENT": "production",
-    "WEBHOOK_BASE_URL": ""
+    "WEBHOOK_BASE_URL": "",
+    "OMRS_APPO_SERVICE_PORT": "3050"
   }
 } 

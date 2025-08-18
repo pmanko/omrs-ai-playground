@@ -1,5 +1,5 @@
-projectName: omrs-appo
-image: omrs-appo:latest
+projectName: omrs-ai-playground
+image: omrs-ai-playground:latest
 logPath: /tmp/logs
 
 packages:
@@ -8,5 +8,8 @@ packages:
   - redis
   - omrs-appo-service
   - reverse-proxy-nginx
+  - analytics-ohs-data-pipes
+  - fhir-datastore-hapi-fhir
+  - multiagent-chat
 
 

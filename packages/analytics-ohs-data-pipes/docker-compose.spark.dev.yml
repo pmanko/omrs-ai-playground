@@ -1,0 +1,10 @@
+services:
+  spark:
+    ports:
+      - target: 10000
+        published: 10001
+        mode: host
+      - target: 4040
+        published: 4041
+        mode: host
+

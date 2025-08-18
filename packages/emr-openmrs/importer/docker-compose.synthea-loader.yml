@@ -1,0 +1,19 @@
+services:
+  openmrs-synthea-loader:
+    image: ${SYNTHEA_UPLOADER_IMAGE}
+    environment:
+      TARGET: OpenMRS
+      BASE_URL: http://openmrs:8080/openmrs/ws/fhir2/R4
+      DATASET: small
+      CORES: 1
+    networks:
+      - openmrs
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: none
+
+networks:
+  openmrs:
+    name: openmrs_default
+    external: true

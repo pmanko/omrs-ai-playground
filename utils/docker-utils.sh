@@ -3,8 +3,10 @@
 # Library name: docker
 # This is a library that contains functions to assist with docker actions
 
-. "$(pwd)/utils/config-utils.sh"
-. "$(pwd)/utils/log.sh"
+# Get the directory of this script to source other utils relatively
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "${SCRIPT_DIR}/config-utils.sh"
+. "${SCRIPT_DIR}/log.sh"
 
 # Gets current status of the provided service
 #

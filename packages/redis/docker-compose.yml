@@ -2,7 +2,6 @@ services:
   redis:
     image: ${REDIS_IMAGE:-redis:7.2.5-alpine}
     hostname: redis
-    container_name: redis
     networks:
       - default
     ports:
