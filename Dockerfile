@@ -3,6 +3,7 @@ ARG PLATFORM_VERSION=latest
 FROM jembi/platform:$PLATFORM_VERSION
 ADD . /implementation
 
+ENV DOCKER_CONTEXT=default
 
 ADD ./utils /instant/utils
 

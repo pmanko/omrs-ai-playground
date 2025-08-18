@@ -38,9 +38,41 @@ case "$DATASET" in
     ;;
 esac
 
-AUTH_ARGS=()
-if [[ -n "${FHIR_USERNAME:-}" && -n "${FHIR_PASSWORD:-}" ]]; then
-  AUTH_ARGS+=("--username" "$FHIR_USERNAME" "--password" "$FHIR_PASSWORD")
+# Optional readiness wait for FHIR CapabilityStatement
+TIMEOUT=${TIMEOUT:-900}
+WAIT_FOR_READY=${WAIT_FOR_READY:-true}
+if [[ "$WAIT_FOR_READY" == "true" ]]; then
+  METADATA_URL="${BASE_URL%/}/metadata"
+  echo "Waiting for FHIR metadata at $METADATA_URL (timeout ${TIMEOUT}s)"
+  end=$((SECONDS + TIMEOUT))
+  ready=1
+  while (( SECONDS < end )); do
+    if python3 - <<'PY'
+import os, sys, requests
+base = os.environ.get('BASE_URL', '')
+url = base.rstrip('/') + '/metadata'
+user = os.environ.get('FHIR_USERNAME')
+pwd = os.environ.get('FHIR_PASSWORD')
+auth = (user, pwd) if user and pwd else None
+try:
+    r = requests.get(url, timeout=5, auth=auth, headers={'Accept': 'application/fhir+json'})
+    r.raise_for_status()
+    data = r.json()
+    sys.exit(0 if data.get('resourceType') == 'CapabilityStatement' else 1)
+except Exception:
+    sys.exit(1)
+PY
+    then
+      echo "FHIR endpoint is ready"
+      ready=0
+      break
+    fi
+    sleep 3
+  done
+  if (( ready != 0 )); then
+    echo "Timed out waiting for FHIR metadata at $METADATA_URL" >&2
+    exit 1
+  fi
 fi
 
 echo "Running uploader: TARGET=$TARGET BASE_URL=$BASE_URL DATASET=$DATASET CORES=$CORES INPUT_DIR=$INPUT_DIR"
@@ -54,5 +86,5 @@ exec python3 /app/uploader/main.py "$TARGET" "$BASE_URL" \
   --input_dir "$INPUT_DIR" \
   --cores "$CORES" \
   ${CONVERT_ARG[@]:-} \
-  ${AUTH_ARGS[@]:-}
+  
 

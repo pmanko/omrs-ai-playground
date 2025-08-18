@@ -13,6 +13,7 @@
 # the License.
 """Connections to a FHIR Server."""
 
+import os
 import json
 from typing import Dict, Union, Optional
 import google.auth
@@ -24,10 +25,22 @@ FhirClient = Union['GcpClient', 'OpenMrsClient', 'HapiClient']
 
 
 def _process_response(response: requests.Response) -> Dict[str, str]:
+  # Handle non-2xx early with helpful diagnostics
   if response.status_code >= 400:
-    raise ValueError('POST to %s failed with code %s and response:\n %s' %
-                     (response.url, response.status_code, response.text))
-  return json.loads(response.text)
+    raise ValueError(
+        'Request to %s failed with code %s and response:\n%s' %
+        (response.url, response.status_code, response.text)
+    )
+  # Some endpoints can return empty body on success; treat as empty JSON
+  if not response.text:
+    return {}
+  try:
+    return json.loads(response.text)
+  except json.JSONDecodeError:
+    raise ValueError(
+        'Expected JSON but got non-JSON from %s (status %s):\n%s' %
+        (response.url, response.status_code, response.text[:500])
+    )
 
 
 def _setup_session(base_url: str):
@@ -46,7 +59,10 @@ class OpenMrsClient:
   def __init__(self, base_url: str):
     self.base_url = base_url
     self.session = _setup_session(self.base_url)
-    self.session.auth = ('admin', 'Admin123')
+    # Optional basic auth via env if provided, default to OpenMRS dev creds
+    username = os.environ.get('FHIR_USERNAME', 'admin')
+    password = os.environ.get('FHIR_PASSWORD', 'Admin123')
+    self.session.auth = (username, password)
     self.response = None
 
   def post_single_resource(self, resource: str, data: Dict[str, str]):
@@ -111,7 +127,10 @@ class HapiClient(OpenMrsClient):
 
   def __init__(self, base_url: str):
     super().__init__(base_url)
-    self.session.auth = ('hapi', 'hapi')
+    # Allow override via env; default hapi/hapi
+    username = os.environ.get('FHIR_USERNAME', 'hapi')
+    password = os.environ.get('FHIR_PASSWORD', 'hapi')
+    self.session.auth = (username, password)
 
   def post_bundle(self, data: Dict[str, str]):
     response_ = self.session.post(self.base_url, json.dumps(data))

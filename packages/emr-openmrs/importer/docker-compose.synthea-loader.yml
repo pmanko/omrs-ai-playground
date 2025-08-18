@@ -2,23 +2,18 @@ services:
   openmrs-synthea-loader:
     image: ${SYNTHEA_UPLOADER_IMAGE}
     environment:
-      TARGET: OPENMRS
+      TARGET: OpenMRS
       BASE_URL: http://openmrs:8080/openmrs/ws/fhir2/R4
       DATASET: small
-      CORES: 3
-      FHIR_USERNAME: ${OMRS_DB_USER:-}
-      FHIR_PASSWORD: ${OMRS_DB_PASSWORD:-}
+      CORES: 1
     networks:
-      - default
-      - mysql
+      - openmrs
     deploy:
       replicas: 1
       restart_policy:
         condition: none
 
 networks:
-  default:
-  mysql:
-    name: mysql
+  openmrs:
+    name: openmrs_default
     external: true
-

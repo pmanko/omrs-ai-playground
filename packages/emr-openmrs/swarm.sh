@@ -47,12 +47,13 @@ function initialize_package() {
     docker::await_service_status "mysql" "mysql" "Running"
     docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.yml" "${openmrs_dev_compose_filename}"
     docker::await_service_status "$STACK" "openmrs" "Running"
+    # Rely on uploader's internal readiness checks; do not curl networks from host
     docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.frontend.yml"
     docker::await_service_status "$STACK" "openmrs-frontend" "Running"
     docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.gateway.yml" "${openmrs_gateway_dev_compose_filename}"
     # On init, run one-shot Synthea loader for small dataset and clean up
     if [[ "${ACTION}" == "init" ]]; then
-      docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}/importer" "docker-compose.synthea-loader.yml" "defer-sanity"
+      docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}/importer" "docker-compose.synthea-loader.yml"
       config::remove_config_importer "$STACK" "openmrs-synthea-loader"
       config::await_service_removed "$STACK" "openmrs-synthea-loader"
     fi

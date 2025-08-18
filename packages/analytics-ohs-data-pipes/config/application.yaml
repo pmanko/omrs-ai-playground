@@ -13,7 +13,7 @@ fhirdata:
   dwhRootPrefix: "/dwh/controller_DWH"
 
   # Create Parquet files and Hive resource tables/views
-  generateParquetFiles: false
+  generateParquetFiles: true
   
   createHiveResourceTables: true
   createParquetViews: true

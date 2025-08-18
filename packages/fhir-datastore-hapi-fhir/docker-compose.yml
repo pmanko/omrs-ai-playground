@@ -49,7 +49,7 @@ networks:
     name: mpi_public
     external: true
   public:
-    name: hapi-fhir_public
+    name: hapi-fhir
     external: true
   default:
   postgres:

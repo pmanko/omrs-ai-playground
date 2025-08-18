@@ -49,20 +49,37 @@ function initialize_package() {
 
     docker::await_service_status "postgres" "postgres-1" "Running"
 
+    # Ensure DB is prepared before bringing up HAPI
     if [[ "${ACTION}" == "init" ]]; then
       log info "Deploying config importer"
       docker::deploy_config_importer "postgres" "$COMPOSE_FILE_PATH/importer/docker-compose.config.yml" "hapi_db_config" "hapi-fhir"
-      # After DB is ready, deploy one-shot Synthea loader for full dataset
-      docker::deploy_service "$STACK" "$COMPOSE_FILE_PATH/importer" "docker-compose.synthea-loader.yml" "defer-sanity"
-      # Cleanup importer-like one-shot loader when complete if not dev mode
+    fi
+
+    # Bring up HAPI first
+    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.yml" "$hapi_fhir_dev_compose_filename"
+
+    # Wait for HAPI to be ready before running the loader
+    log info "Waiting for HAPI to become ready before running Synthea loader"
+    attempts=60
+    until [ $attempts -le 0 ]; do
+      if docker service logs --tail 200 ${STACK}_hapi-fhir 2>/dev/null | grep -qE "Tomcat started|Started HAPI"; then
+        overwrite "Waiting for HAPI to become ready before running Synthea loader ... Done"
+        break
+      fi
+      sleep 2
+      attempts=$((attempts-1))
+    done
+
+    # Only on init, run the one-shot Synthea loader now
+    if [[ "${ACTION}" == "init" ]]; then
+      log info "Deploying Synthea one-shot loader"
+      docker::deploy_service "$STACK" "$COMPOSE_FILE_PATH/importer" "docker-compose.synthea-loader.yml"
       if [[ "${MODE}" != "dev" ]]; then
-        log info "Cleaning up config importer"
+        log info "Cleaning up Synthea loader"
         config::remove_config_importer "$STACK" "hapi-synthea-loader"
         config::await_service_removed "$STACK" "hapi-synthea-loader"
       fi
     fi
-
-    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.yml" "$hapi_fhir_dev_compose_filename"
   ) ||
     {
       log error "Failed to deploy package"
