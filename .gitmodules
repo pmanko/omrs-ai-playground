@@ -9,3 +9,6 @@
 [submodule "projects/fhir-data-pipes"]
 	path = projects/fhir-data-pipes
 	url = https://github.com/google/fhir-data-pipes.git
+[submodule "projects/a2a-samples"]
+	path = projects/a2a-samples
+	url = https://github.com/a2aproject/a2a-samples.git
