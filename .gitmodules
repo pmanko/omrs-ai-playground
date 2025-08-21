@@ -2,10 +2,6 @@
 [submodule "projects/appoint-ready"]
 	path = projects/appoint-ready
 	url = https://huggingface.co/spaces/google/appoint-ready
-[submodule "projects/med-agent-hub"]
-	path = projects/med-agent-hub
-	url = https://github.com/pmanko/med-agent-hub.git
-	branch = main
 [submodule "projects/fhir-data-pipes"]
 	path = projects/fhir-data-pipes
 	url = https://github.com/google/fhir-data-pipes.git
