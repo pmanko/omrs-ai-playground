@@ -8,3 +8,7 @@
 [submodule "projects/a2a-samples"]
 	path = projects/a2a-samples
 	url = https://github.com/a2aproject/a2a-samples.git
+[submodule "projects/med-agent-hub"]
+	path = projects/med-agent-hub
+	url = https://github.com/pmanko/med-agent-hub.git
+	branch = a2a-updates
