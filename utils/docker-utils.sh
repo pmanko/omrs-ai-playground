@@ -72,16 +72,19 @@ docker::await_service_status() {
         # Get unique error messages using sort -u
         new_error_message=($(docker::get_service_unique_errors ${STACK_NAME}_$SERVICE_NAME))
         if [[ -n ${new_error_message[*]} ]]; then
-            # To prevent logging the same error
+            # To prevent logging the same error repeatedly
             if [[ "${error_message[*]}" != "${new_error_message[*]}" ]]; then
                 error_message=(${new_error_message[*]})
                 log error "Deploy error in service ${STACK_NAME}_$SERVICE_NAME: ${error_message[*]}"
             fi
 
-            # To exit in case the error is not having the image
+            # Exit immediately on any service error rather than waiting indefinitely
             if [[ "${new_error_message[*]}" == *"No such image"* ]]; then
                 log error "Do you have access to pull the image?"
                 exit 124
+            else
+                log error "Fatal: ${STACK_NAME}_${SERVICE_NAME} reported an error. Exiting early."
+                exit 1
             fi
         fi
     done

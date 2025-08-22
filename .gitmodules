@@ -2,10 +2,13 @@
 [submodule "projects/appoint-ready"]
 	path = projects/appoint-ready
 	url = https://huggingface.co/spaces/google/appoint-ready
-[submodule "projects/multiagent_chat"]
-	path = projects/multiagent_chat
-	url = https://github.com/pmanko/medgemma_chat.git
-	branch = multiagent
 [submodule "projects/fhir-data-pipes"]
 	path = projects/fhir-data-pipes
 	url = https://github.com/google/fhir-data-pipes.git
+[submodule "projects/a2a-samples"]
+	path = projects/a2a-samples
+	url = https://github.com/a2aproject/a2a-samples.git
+[submodule "projects/med-agent-hub"]
+	path = projects/med-agent-hub
+	url = https://github.com/pmanko/med-agent-hub.git
+	branch = a2a-updates

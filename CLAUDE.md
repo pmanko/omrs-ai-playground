@@ -8,7 +8,7 @@ This is the **OMRS AI Playground** - a comprehensive healthcare AI research plat
 
 ## Key Architecture Components
 
-### 1. Multi-Agent Medical Chat System (`projects/multiagent_chat/`)
+### 1. Multi-Agent Medical Chat System (`projects/med-agent-hub/`)
 - **A2A-enabled multi-agent system** with semantic routing between specialized AI agents
 - **MedGemma integration** for medical expertise via Google's healthcare AI model
 - **FHIR integration** with OpenMRS for live healthcare data queries
@@ -51,7 +51,7 @@ This is the **OMRS AI Playground** - a comprehensive healthcare AI research plat
 ./build-custom-images.sh
 
 # Build specific project images
-./build-custom-images.sh multiagent_chat
+./build-custom-images.sh med-agent-hub
 ./build-custom-images.sh omrs-appo-service
 
 # Initialize specific packages via Instant OpenHIE
@@ -62,7 +62,7 @@ This is the **OMRS AI Playground** - a comprehensive healthcare AI research plat
 
 ### Multi-Agent Chat Development
 ```bash
-cd projects/multiagent_chat/
+cd projects/med-agent-hub/
 
 # Install dependencies
 poetry install
