@@ -99,9 +99,9 @@ build_custom_image() {
     fi
 }
 
-# Function to build multiagent_chat images (both server and client)
-build_multiagent_chat_images() {
-    local project_name="multiagent_chat"
+# Function to build med-agent-hub images (both server and client)
+build_med-agent-hub_images() {
+    local project_name="med-agent-hub"
     local package_name="multiagent-chat"
     
     echo "🔨 Building Multi-Agent Chat images..."
@@ -218,21 +218,21 @@ if [[ $# -eq 0 ]]; then
     echo "🎯 Building all supported projects..."
     build_custom_image "omrs-appo-service" "omrs-appo-service"
     build_custom_image "fhir-data-pipes" "analytics-ohs-data-pipes"
-    build_multiagent_chat_images
+    build_med-agent-hub_images
     build_synthea_images
 else
     # Build specific projects
     for project_name in "$@"; do
         if [[ "$project_name" == "omrs-appo-service" ]]; then
             build_custom_image "$project_name" "omrs-appo-service"
-        elif [[ "$project_name" == "multiagent_chat" || "$project_name" == "multiagent-chat" ]]; then
-            build_multiagent_chat_images
+        elif [[ "$project_name" == "med-agent-hub" || "$project_name" == "multiagent-chat" ]]; then
+            build_med-agent-hub_images
         elif [[ "$project_name" == "synthetic-data-uploader" ]]; then
             build_synthea_images
         elif [[ "$project_name" == "fhir-data-pipes" ]]; then
             build_custom_image "$project_name" "analytics-ohs-data-pipes"
         else
-            echo "⚠️  Skipping unsupported project: $project_name. Supported: 'omrs-appo-service', 'multiagent_chat'"
+            echo "⚠️  Skipping unsupported project: $project_name. Supported: 'omrs-appo-service', 'med-agent-hub'"
         fi
     done
 fi
