@@ -1,7 +1,7 @@
 services:
-  multiagent-chat-server:
-    image: ${MULTIAGENT_CHAT_SERVER_IMAGE:-multiagent-chat-server:latest}
-    hostname: multiagent-chat-server
+  med-agent-hub-server:
+    image: ${MED_AGENT_HUB_SERVER_IMAGE:-med-agent-hub-server:latest}
+    hostname: med-agent-hub-server
     networks:
       - multiagent
       - openmrs
