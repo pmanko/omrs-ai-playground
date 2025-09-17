@@ -1,14 +1,14 @@
 services:
-  multiagent-chat-client:
-    image: ${MULTIAGENT_CHAT_CLIENT_IMAGE:-multiagent-chat-client:latest}
-    hostname: multiagent-chat-client
+  med-agent-hub-client:
+    image: ${MED_AGENT_HUB_CLIENT_IMAGE:-med-agent-hub-client:latest}
+    hostname: med-agent-hub-client
     networks:
       - multiagent
     environment:
       # Optional: Override API base URL if needed
-      API_BASE_URL: ${API_BASE_URL:-http://multiagent-chat-server:3000}
+      API_BASE_URL: ${API_BASE_URL:-http://med-agent-hub-server:3000}
     depends_on:
-      - multiagent-chat-server
+      - med-agent-hub-server
     restart: unless-stopped
     deploy:
       replicas: 1

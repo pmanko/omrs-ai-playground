@@ -4,7 +4,7 @@ declare ACTION=""
 declare MODE=""
 declare COMPOSE_FILE_PATH=""
 declare UTILS_PATH=""
-declare STACK="multiagent-chat"
+declare STACK="med-agent-hub"
 
 function init_vars() {
   ACTION=$1
@@ -63,7 +63,7 @@ function initialize_package() {
 
 function destroy_package() {
   docker::stack_destroy "$STACK"
-  docker::prune_configs "multiagent-chat"
+  docker::prune_configs "med-agent-hub"
 }
 
 main() {

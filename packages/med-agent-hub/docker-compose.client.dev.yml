@@ -1,0 +1,5 @@
+services:
+  med-agent-hub-client:
+    ports:
+      - "${MED_AGENT_HUB_CLIENT_PORT:-8091}:80"
+

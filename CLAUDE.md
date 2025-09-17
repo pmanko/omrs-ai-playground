@@ -57,7 +57,7 @@ This is the **OMRS AI Playground** - a comprehensive healthcare AI research plat
 # Initialize specific packages via Instant OpenHIE
 ./instant package init -n database-mysql -d
 ./instant package init -n emr-openmrs -d
-./instant package init -n multiagent-chat -d
+./instant package init -n med-agent-hub -d
 ```
 
 ### Multi-Agent Chat Development
@@ -104,7 +104,7 @@ python uploader/main.py --help
 ./instant package destroy -n <package-name>   # Remove package
 ./instant package init -n <package-name> -d   # Initialize package
 
-# Available packages: database-mysql, emr-openmrs, multiagent-chat, 
+# Available packages: database-mysql, emr-openmrs, med-agent-hub, 
 # redis, omrs-appo-service, reverse-proxy-nginx, fhir-datastore-hapi-fhir
 ```
 
@@ -125,8 +125,8 @@ OMRS_BACKEND_PORT=8888          # OpenMRS backend API
 OMRS_GATEWAY_PORT=8090          # OpenMRS gateway/proxy
 
 # Multi-Agent Chat Ports  
-MULTIAGENT_CHAT_SERVER_PORT=3000    # Chat server API
-MULTIAGENT_CHAT_CLIENT_PORT=8091    # Web client interface
+MED_AGENT_HUB_SERVER_PORT=3000    # Chat server API
+MED_AGENT_HUB_CLIENT_PORT=8091    # Web client interface
 
 # A2A Service Ports (native A2A mode)
 A2A_ROUTER_PORT=9100            # Semantic router service
