@@ -4,13 +4,3 @@ services:
       - target: 8080
         published: ${ANALYTICS_CONTROLLER_PORT:-8092}
         mode: host
-
-  spark:
-    ports:
-      - target: 10000
-        published: ${ANALYTICS_SPARK_THRIFT_PORT:-10001}
-        mode: host
-      - target: 4040
-        published: ${ANALYTICS_SPARK_UI_PORT:-4041}
-        mode: host
-

@@ -1,7 +1,6 @@
 services:
-  spark:
+  spark-thriftserver:
     image: ${SPARK_IMAGE:-docker.io/bitnami/spark:3.3}
-    hostname: spark-thriftserver
     command:
       - sbin/start-thriftserver.sh
       - --driver-memory
@@ -11,7 +10,7 @@ services:
     volumes:
       - ohs-dwh:/dwh
     networks:
-      - spark
+      - open-health-stack
     healthcheck:
       test: beeline help || exit 1
       interval: 10s
@@ -24,7 +23,7 @@ volumes:
     driver: local
 
 networks:
-  open-health-stack:
-    name: open-health-stack
-    external: true
+    open-health-stack:
+      name: open-health-stack
+      external: true
 

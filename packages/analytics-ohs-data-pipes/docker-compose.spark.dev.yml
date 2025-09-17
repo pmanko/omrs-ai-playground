@@ -1,5 +1,5 @@
 services:
-  spark:
+  spark-thriftserver:
     ports:
       - target: 10000
         published: 10001
