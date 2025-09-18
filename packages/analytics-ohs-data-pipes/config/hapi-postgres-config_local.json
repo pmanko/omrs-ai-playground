@@ -1,11 +1,9 @@
 {
   "jdbcDriverClass": "org.postgresql.Driver",
   "databaseService" : "postgresql",
-  "databaseHostName" : "hapi-fhir-db",
+  "databaseHostName" : "postgres-1",
   "databasePort" : "5432",
   "databaseUser" : "admin",
-  "databasePassword" : "admin",
+  "databasePassword" : "instant101",
   "databaseName" : "hapi"
 }
-
-

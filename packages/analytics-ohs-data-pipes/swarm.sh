@@ -4,7 +4,7 @@ declare ACTION=""
 declare MODE=""
 declare COMPOSE_FILE_PATH=""
 declare UTILS_PATH=""
-declare STACK="analytics-ohs-data-pipes"
+declare STACK="openhealthstack"
 
 function init_vars() {
   ACTION=$1
@@ -16,18 +16,6 @@ function init_vars() {
   )
 
   UTILS_PATH="${COMPOSE_FILE_PATH}/../utils"
-
-  # Load environment variables from package-metadata.json if present
-  if [ -f "${COMPOSE_FILE_PATH}/package-metadata.json" ]; then
-    # Read as compact JSON entries to preserve spaces and special characters
-    while IFS= read -r entry; do
-      key=$(echo "$entry" | jq -r '.key')
-      value=$(echo "$entry" | jq -r '.value')
-      # Assign without word-splitting and export
-      printf -v "$key" '%s' "$value"
-      export "$key"
-    done < <(jq -c '.environmentVariables | to_entries[]' "${COMPOSE_FILE_PATH}/package-metadata.json")
-  fi
 
   readonly ACTION
   readonly MODE
@@ -44,56 +32,40 @@ function import_sources() {
 }
 
 function initialize_package() {
-  local spark_dev_compose_filename=""
-  local controller_dev_compose_filename=""
+  local dev_compose_filename=""
 
-  if [ "${MODE}" == "dev" ]; then
+  if [[ "${MODE}" == "dev" ]]; then
     log info "Running package in DEV mode"
-    spark_dev_compose_filename="docker-compose.spark.dev.yml"
-    controller_dev_compose_filename="docker-compose.controller.dev.yml"
+    dev_compose_filename="docker-compose-dev.yml"
   else
     log info "Running package in PROD mode"
   fi
 
   (
-    # Deploy Spark first
-    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.spark.yml" "" "$spark_dev_compose_filename"
+    # Wait for hapi-fhir to start
+    docker::await_service_reachable $STACK "hapi-fhir" "FHIR Server started"
 
-    # Then deploy the pipeline controller (no config substitution needed)
-    # Deploy controller; compose file references configs directly from ./config
-    docker::deploy_service "$STACK" "${COMPOSE_FILE_PATH}" "docker-compose.controller.yml" "" "$controller_dev_compose_filename"
+    docker::deploy_service $STACK "${COMPOSE_FILE_PATH}" "docker-compose-spark.yml"
 
-    # Post-deploy sanity: fail fast if the controller crashes during boot
-    local attempts=40
-    local svc="${STACK}_pipeline-controller"
-    log info "Checking ${svc} boot status ..."
-    until [ $attempts -le 0 ]; do
-      if docker service logs --tail 200 "$svc" 2>/dev/null | grep -q "Started ControlPanelApplication"; then
-        overwrite "Checking ${svc} boot status ... Done"
-        break
-      fi
-      if docker service logs --tail 200 "$svc" 2>/dev/null | grep -qE "Application run failed|NoSuchFileException|UnsatisfiedDependencyException"; then
-        log error "${svc} failed to start. Recent logs:" 
-        docker service logs --tail 200 "$svc" 2>/dev/null 1>&2
-        exit 1
-      fi
-      sleep 3
-      attempts=$((attempts-1))
-    done
-    if [ $attempts -le 0 ]; then
-      log error "Timed out waiting for ${svc} to report a successful start"
-      exit 1
-    fi
-  ) ||
-    {
-      log error "Failed to deploy package"
-      exit 1
-    }
+    docker::await_service_reachable $STACK "spark" "Spark Server started"
+
+    docker::deploy_service $STACK "${COMPOSE_FILE_PATH}" "docker-compose.yml" "${dev_compose_filename}"
+  ) || {
+    log error "Failed to deploy package"
+    exit 1
+  }
+}
+
+function scale_services_down() {
+  docker::service_destroy $STACK "openhealthstack"
+
+  docker::scale_services $STACK 0
 }
 
 function destroy_package() {
-  docker::stack_destroy "$STACK"
-  docker::prune_configs "analytics-ohs-data-pipes"
+  docker::stack_destroy $STACK
+
+  docker::prune_configs "openhealthstack"
 }
 
 main() {
@@ -101,10 +73,13 @@ main() {
   import_sources
 
   if [[ "${ACTION}" == "init" ]] || [[ "${ACTION}" == "up" ]]; then
+    log info "Running package in Single node mode"
+
     initialize_package
   elif [[ "${ACTION}" == "down" ]]; then
     log info "Scaling down package"
-    docker::scale_services "$STACK" 0
+
+    scale_services_down
   elif [[ "${ACTION}" == "destroy" ]]; then
     log info "Destroying package"
     destroy_package
@@ -114,5 +89,3 @@ main() {
 }
 
 main "$@"
-
-

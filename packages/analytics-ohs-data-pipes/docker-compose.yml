@@ -1,0 +1,56 @@
+
+services:
+  pipeline-controller:
+    image: ${LOCAL_FHIR_DATA_PIPES_IMAGE:-FHIR_DATA_PIPES_IMAGE}
+    volumes:
+      - dwh:/dwh
+    networks:
+      - openhealthstack
+      - hapi-fhir
+      - hapi-fhir-postgres
+      - reverse-proxy
+      - default
+    configs:
+      - source: application.yaml
+        target: /app/config/application.yaml
+      - source: hapi-postgres-config_local.json
+        target: /app/config/hapi-postgres-config_local.json
+      - source: thriftserver-hive-config_local.json
+        target: /app/config/thriftserver-hive-config_local.json
+      # - source: wait_for_script
+      #   target: /app/wait-for.sh
+      # - source: healthcheck_script
+      #   target: /app/healthcheck.sh
+    # healthcheck:
+    #   test: ["CMD", "bash", "/app/healthcheck.sh"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+configs:
+  application.yaml:
+    file: ${PIPELINE_CONFIG}/application.yaml
+    name: application.yaml
+  hapi-postgres-config_local.json:
+    file: ${PIPELINE_CONFIG}/hapi-postgres-config_local.json
+    name: hapi-postgres-config_local.json
+  thriftserver-hive-config_local.json:
+    file: ${PIPELINE_CONFIG}/thriftserver-hive-config_local.json
+    name: thriftserver-hive-config_local.json
+
+networks:
+  openhealthstack:
+    external: true
+    name: openhealthstack_public
+  hapi-fhir:
+    name: hapi-fhir_public
+    external: true
+  hapi-fhir-postgres:
+    name: hapi-fhir_postgres_public
+    external: true
+  reverse-proxy:
+    name: reverse-proxy_public
+    external: true
+volumes:
+  dwh:
+    name: dwh
+    external: true

@@ -15,8 +15,8 @@
 # ./instant package down -n database-postgres
 # ./instant package init -n database-postgres -d
 
-./instant package destroy -n fhir-datastore-hapi-fhir
-./instant package init -n fhir-datastore-hapi-fhir -d 
+# ./instant package destroy -n fhir-datastore-hapi-fhir
+# ./instant package init -n fhir-datastore-hapi-fhir -d 
 
 ./instant package destroy -n analytics-ohs-data-pipes
 ./instant package init -n analytics-ohs-data-pipes -d 

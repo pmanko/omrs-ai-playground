@@ -13,7 +13,7 @@ honcho -f Procfile.dev start
 
 Endpoints
 - Server API: `/:3000` → `/health`, `/generate/{orchestrator|medical|clinical}`, `/chat` (A2A route)
-- Agents (dev): Router `:9100`, MedGemma `:9101`, Clinical `:9102`
+- Agents (dev): Router `:9100`, Medical `:9101`, Clinical `:9102`, Administrative `:9103`
 
 LM Studio Setup
 - Start local server (e.g., `http://localhost:1234`), load models for orchestrator/medical/clinical as configured.

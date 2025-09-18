@@ -1,46 +1,58 @@
+#
+# Copyright 2020-2022 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# See `pipelines/controller/config/application.yaml` for full documentation
+# of these options.
+# This config is meant to be used by `compose-controller-spark-sql.yaml`.
 fhirdata:
-  # Choose how to fetch FHIR data. For initial setup use FHIR search over REST.
-  # Valid: FHIR_SEARCH | BULK_EXPORT | HAPI_JDBC | OPENMRS_JDBC | JSON | NDJSON | PARQUET
-  fhirFetchMode: "FHIR_SEARCH"
-
-  # URL to the source FHIR server. If the controller joins the same Docker network
-  # as HAPI FHIR, this internal URL works; otherwise adjust to a reachable host URL.
-  # Example internal: http://hapi-fhir:8080/fhir
-  # Example external: http://localhost:3447/fhir
-  fhirServerUrl: "http://hapi-fhir:8080/fhir"
-
-  # Parquet-on-FHIR warehouse root mounted into the container
+  fhirFetchMode: "HAPI_JDBC"
+  # 172.17.0.1 is an example docker network interface ip address;
+  # `hapi-server` is another docker example where a container with that name is
+  # running on the same docker network.
+  #fhirServerUrl: "http://hapi-fhir:8080/fhir"
+  # fhirServerUrl: "http://hapi-server:8080/fhir"
+  dbConfig: "config/hapi-postgres-config_local.json"
   dwhRootPrefix: "/dwh/controller_DWH"
-
-  # Create Parquet files and Hive resource tables/views
   generateParquetFiles: true
-  
+  incrementalSchedule: "0 0 * * * *"
+  purgeSchedule: "0 30 * * * *"
+  numOfDwhSnapshotsToRetain: 2
+  # There is no Questionnaire in our test FHIR server, but it is added to
+  # prevent regression of https://github.com/google/fhir-data-pipes/issues/785.
+  # TODO: add resource table creation to e2e tests.
+  resourceList: "Patient"
+  numThreads: -1
+  autoGenerateFlinkConfiguration: true
   createHiveResourceTables: true
-  createParquetViews: true
-  # Paths to Hive/Thrift and view definitions provided via Docker configs
   thriftserverHiveConfig: "config/thriftserver-hive-config_local.json"
   hiveResourceViewsDir: "config/views"
-  viewDefinitionsDir: "config/views"
-  # sinkDbConfigPath: "config/hapi-postgres-config_local_views.json"
-  # Note: No fhirdata.dbConfig when using FHIR_SEARCH fetch mode
-
-  # Schedules (Spring cron, 6-fields: sec min hour day month day-of-week)
-  incrementalSchedule: "0 0 2 * * *"   # nightly at 02:00
-  purgeSchedule: "0 30 2 * * *"        # nightly at 02:30
-
-  # Keep 2 snapshots of the DWH
-  numOfDwhSnapshotsToRetain: 2
-
-  # Resource types to extract
-  resourceList: "Patient,Encounter,Observation"
-
-  # Auto-tune Flink configuration if not explicitly provided
-  autoGenerateFlinkConfiguration: true
-
-  # FHIR version and Parquet tuning
+  # structureDefinitionsPath: "config/profile-definitions"
+  structureDefinitionsPath: "classpath:/r4-us-core-definitions"
   fhirVersion: "R4"
   rowGroupSizeForParquetFiles: 33554432   # 32mb
+  viewDefinitionsDir: "config/views"
+  createParquetViews: true
+  # sinkDbConfigPath: "config/hapi-postgres-config_local_views.json"
+  #sinkFhirServerUrl: "http://sink-server:8080/fhir"
+  #sinkUserName: "hapi"
+  #sinkPassword: "hapi123"
+  recursiveDepth: 1
 
+# Enable spring boot actuator end points, use "*" to expose all endpoints, or a comma-separated
+# list to expose selected ones
 management:
   endpoints:
     web:

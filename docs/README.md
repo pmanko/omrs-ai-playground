@@ -8,6 +8,7 @@ Overview
 Start here
 - med-agent-hub docs live in the project: `projects/med-agent-hub/docs/docs.md`
 - Synthetic Data Uploader: `docs/synthetic-data-uploader/README.md`
+- Testing Guide: `docs/med-agent-hub/testing.md` (MCP tool and integration testing)
 
 Key packages
 - `packages/med-agent-hub/` (Instant package for server/client images)

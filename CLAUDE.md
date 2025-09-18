@@ -10,9 +10,16 @@ This is the **OMRS AI Playground** - a comprehensive healthcare AI research plat
 
 ### 1. Multi-Agent Medical Chat System (`projects/med-agent-hub/`)
 - **A2A-enabled multi-agent system** with semantic routing between specialized AI agents
+- **MCP-compliant tool integration** for data access via Model Context Protocol
 - **MedGemma integration** for medical expertise via Google's healthcare AI model
 - **FHIR integration** with OpenMRS for live healthcare data queries
 - **Parquet-on-FHIR** support for local analytics via Spark SQL
+- **Enhanced agent capabilities**:
+  - Population health analytics via Spark SQL
+  - Patient longitudinal records (IPS-like comprehensive health history)
+  - FHIR resource search and retrieval
+  - Medical literature search (placeholder for future resources)
+  - Appointment management via OpenMRS REST API
 - **Mixture of Experts** approach using different LLMs for different tasks:
   - Generalist LLMs (Llama-3, Gemma) for query generation and routing
   - MedGemma for clinical synthesis and medical responses
@@ -64,24 +71,28 @@ This is the **OMRS AI Playground** - a comprehensive healthcare AI research plat
 ```bash
 cd projects/med-agent-hub/
 
-# Install dependencies
-poetry install
+# Install dependencies (includes MCP tools)
+poetry install --with dev --extras "spark duckdb"
 
-# Development mode (simulated A2A)
-cp env.example .env  # Configure LLM endpoints and API keys
-poetry run uvicorn server.main:app --host 0.0.0.0 --port 3000
+# Development mode (A2A agents with MCP tools)
+cp env.recommended .env  # Configure LLM endpoints, FHIR, and Spark
+poetry run honcho -f Procfile.dev start
 
-# Native A2A mode (separate services)
-poetry run uvicorn server.a2a_services.router_service:app --host 0.0.0.0 --port 9100
-poetry run uvicorn server.a2a_services.medgemma_service:app --host 0.0.0.0 --port 9101  
-poetry run uvicorn server.a2a_services.clinical_service:app --host 0.0.0.0 --port 9102
-poetry run uvicorn server.main:app --host 0.0.0.0 --port 3000
+# Individual agent services (for debugging)
+poetry run uvicorn server.sdk_agents.router_server:app --host 0.0.0.0 --port 9100
+poetry run uvicorn server.sdk_agents.medgemma_server:app --host 0.0.0.0 --port 9101  
+poetry run uvicorn server.sdk_agents.clinical_server:app --host 0.0.0.0 --port 9102
+poetry run uvicorn server.sdk_agents.administrative_server:app --host 0.0.0.0 --port 9103
+
+# Testing (includes MCP tool tests)
+./tests/run_tests.sh              # All tests
+./tests/run_tests.sh mcp          # MCP tool tests only  
+./tests/run_tests.sh mcp-integration  # Full integration tests
 
 # Code quality
 poetry run black .
 poetry run isort .
 poetry run flake8 .
-poetry run pytest
 ```
 
 ### Synthetic Data Operations
@@ -131,7 +142,8 @@ MED_AGENT_HUB_CLIENT_PORT=8091    # Web client interface
 # A2A Service Ports (native A2A mode)
 A2A_ROUTER_PORT=9100            # Semantic router service
 A2A_MEDGEMMA_PORT=9101          # MedGemma agent service
-A2A_CLINICAL_PORT=9102          # Clinical research agent
+A2A_CLINICAL_PORT=9102          # Clinical research agent (with MCP tools)
+A2A_ADMIN_PORT=9103             # Administrative agent (appointments)
 
 # FHIR & Analytics Ports
 HAPI_FHIR_PORT=3447             # HAPI FHIR server

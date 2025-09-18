@@ -1,6 +1,0 @@
-services:
-  pipeline-controller:
-    ports:
-      - target: 8080
-        published: ${ANALYTICS_CONTROLLER_PORT:-8092}
-        mode: host

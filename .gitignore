@@ -48,3 +48,6 @@ logs/
 
 # Project-specific files
 projects/appoint-ready/cache_archive.zip
+
+*.bak
+*.bkp
