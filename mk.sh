@@ -11,18 +11,18 @@
 
 # ./instant package down -n emr-openmrs
 # ./instant package init -n emr-openmrs -d
-# ./instant package down -n emr-openmrs
-# ./instant package up -n emr-openmrs -d
+
+# ./instant package down -n database-postgres
+# ./instant package init -n database-postgres -d
 
 # ./instant package destroy -n fhir-datastore-hapi-fhir
 # ./instant package init -n fhir-datastore-hapi-fhir -d 
 
-# ./instant package destroy -n analytics-ohs-data-pipes
-# ./instant package init -n analytics-ohs-data-pipes -d 
+./instant package destroy -n analytics-ohs-data-pipes
+./instant package init -n analytics-ohs-data-pipes -d 
 
-
-./instant package destroy -n multiagent-chat
-./instant package init -n multiagent-chat -d 
+# ./instant package destroy -n med-agent-hub
+# ./instant package init -n med-agent-hub -d 
 
 # ./instant package destroy -n redis
 # ./instant package init -n redis -d

@@ -1,0 +1,30 @@
+services:
+  med-agent-hub-client:
+    image: ${MED_AGENT_HUB_CLIENT_IMAGE:-med-agent-hub-client:latest}
+    hostname: med-agent-hub-client
+    networks:
+      - multiagent
+    environment:
+      # Optional: Override API base URL if needed
+      API_BASE_URL: ${API_BASE_URL:-http://med-agent-hub-server:3000}
+    depends_on:
+      - med-agent-hub-server
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  multiagent:
+    external: true
+    name: multiagent_public

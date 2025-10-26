@@ -1,0 +1,50 @@
+services:  
+  spark:
+    image: docker.io/bitnami/spark:3.5.6
+    hostname: ohs-spark-server
+    command:
+      - sbin/start-thriftserver.sh
+      - --driver-memory
+      # You may need to increase this if your queries/data are too large.
+      - 5g
+    environment:
+      - HIVE_SERVER2_THRIFT_PORT=10000
+    # ports:
+    #   - '10001:10000'
+    #   - '4041:4040'
+    volumes:
+      - dwh:/dwh
+      # NON-EMBEDDED METASTORE CONFIG:
+      # If you want to persist the Metastore data, e.g., table and view
+      # definitions, you can use an external database by adjusting hive-site.xml
+      #- ./hive-site_example.xml:/opt/bitnami/spark/conf/hive-site.xml
+      # Note to use an external DB, you need to provide its driver jar too:
+      #- ./postgresql-42.6.0.jar:/opt/bitnami/spark/jars/postgresql-42.6.0.jar
+      - spark_vol_single:/opt/bitnami/spark
+    networks:
+      - openhealthstack
+      - default
+      - reverse-proxy
+    healthcheck:
+      test: beeline help || exit 1
+      interval: 10s
+      retries: 10
+      start_period: 5s
+      timeout: 60s
+    ports:
+      - 10001:10000
+      - 4041:4040
+
+volumes:
+  dwh:
+    name: dwh
+    external: true
+  spark_vol_single:
+
+networks:
+  openhealthstack:
+    external: true
+    name: openhealthstack_public
+  reverse-proxy:
+    name: reverse-proxy_public
+    external: true

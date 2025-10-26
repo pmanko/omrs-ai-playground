@@ -102,7 +102,7 @@ build_custom_image() {
 # Function to build med-agent-hub images (both server and client)
 build_med-agent-hub_images() {
     local project_name="med-agent-hub"
-    local package_name="multiagent-chat"
+    local package_name="med-agent-hub"
     
     echo "🔨 Building Multi-Agent Chat images..."
     
@@ -113,12 +113,12 @@ build_med-agent-hub_images() {
     fi
     
     # Get image tags from environment/package metadata
-    local server_image=$(get_env_value "MULTIAGENT_CHAT_SERVER_IMAGE" "$package_name")
-    local client_image=$(get_env_value "MULTIAGENT_CHAT_CLIENT_IMAGE" "$package_name")
+    local server_image=$(get_env_value "MED_AGENT_HUB_SERVER_IMAGE" "$package_name")
+    local client_image=$(get_env_value "MED_AGENT_HUB_CLIENT_IMAGE" "$package_name")
     
     if [[ -z "$server_image" || -z "$client_image" ]]; then
         echo "⏭️  Skipping build for $project_name - image tags not set"
-        echo "   To enable building, set MULTIAGENT_CHAT_SERVER_IMAGE and MULTIAGENT_CHAT_CLIENT_IMAGE"
+        echo "   To enable building, set MED_AGENT_HUB_SERVER_IMAGE and MED_AGENT_HUB_CLIENT_IMAGE"
         return 0
     fi
     
@@ -225,7 +225,7 @@ else
     for project_name in "$@"; do
         if [[ "$project_name" == "omrs-appo-service" ]]; then
             build_custom_image "$project_name" "omrs-appo-service"
-        elif [[ "$project_name" == "med-agent-hub" || "$project_name" == "multiagent-chat" ]]; then
+        elif [[ "$project_name" == "med-agent-hub" || "$project_name" == "med-agent-hub" ]]; then
             build_med-agent-hub_images
         elif [[ "$project_name" == "synthetic-data-uploader" ]]; then
             build_synthea_images

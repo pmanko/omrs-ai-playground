@@ -1,0 +1,5 @@
+services:
+  med-agent-hub-server:
+    ports:
+      - "${MED_AGENT_HUB_SERVER_PORT:-3000}:3000"
+

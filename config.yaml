@@ -10,6 +10,6 @@ packages:
   - reverse-proxy-nginx
   - analytics-ohs-data-pipes
   - fhir-datastore-hapi-fhir
-  - multiagent-chat
+  - med-agent-hub
 
 

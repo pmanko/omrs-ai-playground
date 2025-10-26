@@ -1,5 +1,0 @@
-services:
-  multiagent-chat-client:
-    ports:
-      - "${MULTIAGENT_CHAT_CLIENT_PORT:-8091}:80"
-
