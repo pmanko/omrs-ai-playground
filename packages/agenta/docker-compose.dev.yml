@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  agenta-backend:
+    ports:
+      - target: 8000
+        published: ${AGENTA_API_PORT:-8001}
+        mode: host
+
+  agenta-frontend:
+    ports:
+      - target: 3000
+        published: ${AGENTA_WEB_PORT:-8002}
+        mode: host
+

@@ -9,6 +9,9 @@ Creating a new agent
 2) Executor in `server/sdk_agents/*_executor.py` (optionally with MCP tool integration)
 3) Server in `server/sdk_agents/*_server.py`
 4) Register in Router agent registry and `Procfile.dev`
+5) Add prompts to `server/agent_configs/new_agent.yaml`
+6) Migrate to Agenta: `poetry run python -m server.prompt_management.migrate_to_agenta --agent new_agent`
+7) Test prompts in Agenta playground (http://localhost:8002)
 
 MCP Tool Integration
 - Tools in `server/mcp/` follow Model Context Protocol standards

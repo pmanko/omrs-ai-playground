@@ -6,6 +6,18 @@ High-level
 - Clinical Research Agent provides data analytics via MCP tools (Spark, FHIR, literature search).
 - Administrative Agent handles appointments via OpenMRS REST API.
 - LM Studio provides OpenAI-compatible LLM endpoints for all models.
+- Agenta provides web-based prompt management with version control.
+
+Infrastructure Components
+- `database-postgres` - Shared PostgreSQL for Agenta and HAPI FHIR
+- `redis` - Caching layer for services
+- `agenta` - Prompt management platform (backend + frontend + redis)
+- `med-agent-hub` - AI agents (server + client)
+
+Deployment Order
+1. database-postgres, redis (infrastructure)
+2. agenta (prompt management)
+3. med-agent-hub (AI agents - depends on agenta)
 
 Message flow
 1) Client → Router (JSON-RPC)

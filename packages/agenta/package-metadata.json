@@ -1,0 +1,25 @@
+{
+  "id": "agenta",
+  "name": "Agenta Prompt Management",
+  "description": "Self-hosted prompt management and testing platform for AI agents",
+  "type": "infrastructure",
+  "version": "0.1.0",
+  "dependencies": ["database-postgres", "redis"],
+  "environmentVariables": {
+    "AGENTA_BACKEND_IMAGE": "agenta/agenta-backend:latest",
+    "AGENTA_WEB_IMAGE": "agenta/agenta-web:latest",
+    "AGENTA_API_PORT": "8001",
+    "AGENTA_WEB_PORT": "8002",
+    "POSTGRES_SERVICE": "postgres-1",
+    "POSTGRES_PORT": "5432",
+    "POSTGRES_USER": "postgres",
+    "POSTGRES_PASSWORD": "instant101",
+    "POSTGRES_DATABASE": "postgres",
+    "AGENTA_POSTGRESQL_DATABASE": "agenta",
+    "AGENTA_POSTGRESQL_USERNAME": "agenta",
+    "AGENTA_POSTGRESQL_PASSWORD": "agenta123",
+    "REDIS_SERVICE": "redis",
+    "REDIS_PORT": "6379"
+  }
+}
+

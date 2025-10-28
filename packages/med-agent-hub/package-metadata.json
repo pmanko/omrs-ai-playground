@@ -35,6 +35,10 @@
     "MED_AGENT_HUB_CLIENT_PORT": "8091",
     "A2A_ROUTER_PORT": "9100",
     "A2A_MEDGEMMA_PORT": "9101",
-    "A2A_CLINICAL_PORT": "9102"
+    "A2A_CLINICAL_PORT": "9102",
+    "AGENTA_API_URL": "http://agenta-backend:8000/api/v1",
+    "AGENTA_ENVIRONMENT": "development",
+    "PROMPT_BACKEND": "auto",
+    "PROMPT_CACHE_TTL": "300"
   }
 }

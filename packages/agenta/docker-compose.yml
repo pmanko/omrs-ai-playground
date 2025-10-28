@@ -1,0 +1,109 @@
+version: "3.9"
+
+services:
+  agenta-backend:
+    image: ${AGENTA_BACKEND_IMAGE:-agenta/agenta-backend:latest}
+    hostname: agenta-backend
+    networks:
+      - default
+      - multiagent
+      - postgres
+      - redis
+    environment:
+      # Database configuration
+      POSTGRES_URI: postgresql://${AGENTA_POSTGRESQL_USERNAME}:${AGENTA_POSTGRESQL_PASSWORD}@${POSTGRES_SERVICE}:${POSTGRES_PORT}/${AGENTA_POSTGRESQL_DATABASE}
+      DATABASE_MODE: postgres
+      
+      # Redis configuration
+      REDIS_URL: redis://${REDIS_SERVICE}:${REDIS_PORT}/0
+      
+      # Agenta configuration
+      ENVIRONMENT: production
+      AGENTA_API_URL: http://agenta-backend:8000
+      
+      # Allow CORS for development
+      ALLOW_ORIGINS: "*"
+    depends_on:
+      - agenta-redis
+    volumes:
+      - agenta-uploads:/app/uploads
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  agenta-frontend:
+    image: ${AGENTA_WEB_IMAGE:-agenta/agenta-web:latest}
+    hostname: agenta-frontend
+    networks:
+      - default
+      - multiagent
+    environment:
+      NEXT_PUBLIC_AGENTA_API_URL: http://agenta-backend:8000
+      AGENTA_API_URL: http://agenta-backend:8000
+    depends_on:
+      - agenta-backend
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  agenta-redis:
+    image: redis:7-alpine
+    hostname: agenta-redis
+    networks:
+      - default
+    volumes:
+      - agenta-redis-data:/data
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+networks:
+  default:
+  multiagent:
+    name: multiagent_public
+    external: true
+  postgres:
+    name: postgres_public
+    external: true
+  redis:
+    name: redis_public
+    external: true
+
+volumes:
+  agenta-uploads:
+    driver: local
+  agenta-redis-data:
+    driver: local
+

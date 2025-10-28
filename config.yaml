@@ -4,8 +4,10 @@ logPath: /tmp/logs
 
 packages:
   - database-mysql
+  - database-postgres
   - emr-openmrs
   - redis
+  - agenta
   - omrs-appo-service
   - reverse-proxy-nginx
   - analytics-ohs-data-pipes

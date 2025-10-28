@@ -14,7 +14,7 @@
     "DOMAIN_NAME": "omrs-appo.live",
     "SUBDOMAINS": "www.omrs-appo.live,service.omrs-appo.live,openmrs.omrs-appo.live",
     "RENEWAL_EMAIL": "dummy@omrs.org",
-    "STAGING": "false",
+    "STAGING": "true",
     "INSECURE": "false",
     "INSECURE_PORTS": ""
   }

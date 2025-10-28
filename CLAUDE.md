@@ -10,6 +10,7 @@ This is the **OMRS AI Playground** - a comprehensive healthcare AI research plat
 
 ### 1. Multi-Agent Medical Chat System (`projects/med-agent-hub/`)
 - **A2A-enabled multi-agent system** with semantic routing between specialized AI agents
+- **Agenta prompt management** with web-based UI for rapid iteration and version control
 - **MCP-compliant tool integration** for data access via Model Context Protocol
 - **MedGemma integration** for medical expertise via Google's healthcare AI model
 - **FHIR integration** with OpenMRS for live healthcare data queries
@@ -115,8 +116,15 @@ python uploader/main.py --help
 ./instant package destroy -n <package-name>   # Remove package
 ./instant package init -n <package-name> -d   # Initialize package
 
-# Available packages: database-mysql, emr-openmrs, med-agent-hub, 
-# redis, omrs-appo-service, reverse-proxy-nginx, fhir-datastore-hapi-fhir
+# Available packages: database-mysql, database-postgres, emr-openmrs, redis, agenta,
+# med-agent-hub, omrs-appo-service, reverse-proxy-nginx, 
+# analytics-ohs-data-pipes, fhir-datastore-hapi-fhir
+
+# Package deployment order (for dependencies):
+# 1. database-postgres, database-mysql, redis (infrastructure)
+# 2. agenta (prompt management)
+# 3. emr-openmrs, fhir-datastore-hapi-fhir (data services)
+# 4. med-agent-hub (AI agents - depends on agenta)
 ```
 
 ## Configuration Management
@@ -144,6 +152,10 @@ A2A_ROUTER_PORT=9100            # Semantic router service
 A2A_MEDGEMMA_PORT=9101          # MedGemma agent service
 A2A_CLINICAL_PORT=9102          # Clinical research agent (with MCP tools)
 A2A_ADMIN_PORT=9103             # Administrative agent (appointments)
+
+# Agenta Prompt Management Ports
+AGENTA_API_PORT=8001            # Agenta API server
+AGENTA_WEB_PORT=8002            # Agenta web UI
 
 # FHIR & Analytics Ports
 HAPI_FHIR_PORT=3447             # HAPI FHIR server
@@ -250,8 +262,56 @@ Application projects with custom code:
 ### Extending Multi-Agent System
 1. Define new agent skills in agent registry
 2. Implement agent logic with standardized A2A message handling
-3. Update orchestrator prompts to recognize new capabilities
-4. Test end-to-end workflow through web UI
+3. Create prompts in `server/agent_configs/new_agent.yaml`
+4. Migrate prompts to Agenta: `poetry run python -m server.prompt_management.migrate_to_agenta --agent new_agent`
+5. Test prompts in Agenta playground
+6. Update orchestrator prompts to recognize new capabilities
+7. Test end-to-end workflow through web UI
+
+### Managing Agent Prompts with Agenta
+
+The project uses a dual-source prompt system for flexibility and resilience:
+
+**Primary: Agenta Web UI** (requires agenta package deployed)
+- Access: `http://localhost:8002/prompts`
+- Edit prompts without code changes
+- Test in playground with LM Studio models
+- Version control with one-click rollback
+- Agents auto-refresh after cache TTL (5 min default)
+
+**Fallback: YAML Files**
+- Location: `server/agent_configs/*.yaml`
+- Source of truth, git-versioned
+- Automatic fallback if Agenta unavailable
+
+**Quick Start:**
+```bash
+# 1. Deploy Agenta package
+./instant package init -n agenta -d
+
+# 2. Configure LM Studio models in UI
+open http://localhost:8002/models
+# Add Custom Models pointing to http://host.docker.internal:1234/v1
+
+# 3. Migrate existing prompts
+cd projects/med-agent-hub
+poetry run python -m server.prompt_management.migrate_to_agenta
+
+# 4. Start editing prompts in web UI
+open http://localhost:8002/prompts
+```
+
+**Workflow:**
+1. Edit prompts in Agenta UI: `http://localhost:8002/prompts`
+2. Test changes in Agenta playground with LM Studio models
+3. Save version (agents pick up after cache TTL or restart)
+4. Rollback if needed: Select previous version in Agenta UI
+5. YAML files in `server/agent_configs/` serve as fallback source of truth
+
+**Configuration Modes** (set `PROMPT_BACKEND` in env):
+- `auto` - Try Agenta, fall back to YAML (default)
+- `agenta` - Always use Agenta (fail if unavailable)
+- `yaml` - Always use YAML files (ignore Agenta)
 
 ### Healthcare Workflow Implementation
 1. Design clinical workflow with FHIR resource mapping

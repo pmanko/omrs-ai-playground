@@ -1,0 +1,12 @@
+{
+  "name": "agenta-db-config",
+  "version": "0.1.0",
+  "description": "Database initialization for Agenta",
+  "main": "create-agenta-db.js",
+  "author": "OMRS AI Team",
+  "license": "MIT",
+  "dependencies": {
+    "pg": "^8.11.3"
+  }
+}
+
